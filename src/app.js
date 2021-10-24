@@ -86,7 +86,7 @@ const createWindow = () => {
   }
   const loadWebView = () => {
     try {
-      main_window.loadURL('https://www.electronjs.org/docs/') // TODO 套壳
+      main_window.loadURL('https://www.appcoder.io')
       // throw new Error("If WebView also fails...");
     } catch (error) {
       loadLog +=
@@ -123,14 +123,16 @@ app.on('ready', () => {
   appMenu() // 状态栏菜单
 })
 app.whenReady().then(() => {
-  console.log('Electron is really ready at ', new Date().toLocaleString())
+  // console.log('Electron is really ready at ', new Date().toLocaleString())
 
   createWindow()
 
   // 接收页面渲染完成通信
   ipcMain.on('pageOnload', (event, data) => {
+    if (!data.page) return
+
     // 首页完成渲染后，显示窗口
-    if (data.page && data.page === 'index') {
+    if (data.page === 'index') {
       console.log('index page onload')
       main_window.show()
     }

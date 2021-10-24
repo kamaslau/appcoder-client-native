@@ -9,6 +9,12 @@
 @viewport {
   width: device-width;
 }
+/**
+ * 全局变量
+ */
+/**
+ * 全局样式
+ */
 html {
   font-size: 16px;
 }
@@ -40,12 +46,27 @@ fieldset {
   margin-bottom: 1.875rem;
 }
 fieldset:not(:first-child) {
-  border-top: 1px solid #ced4da;
+  border-top: 1px solid #f8f9fa;
   padding-top: 1.875rem;
 }
-
-.form-group:not(:first-child) {
+fieldset .form-group:not(:first-child) {
   margin-top: 1.25rem;
+}
+fieldset .form-group.row label {
+  text-align: end;
+}
+
+.form-footer {
+  display: flex;
+  background-color: #f8f9fa;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+  border-radius: 0.25rem;
+  gap: 1.25rem;
+  padding: 0.625rem;
+}
+.form-footer #button-reset {
+  margin-inline-end: auto;
 }
 
 /** 列表 **/

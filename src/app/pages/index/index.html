@@ -26,18 +26,18 @@
       >
         <h1>AppCoder</h1>
 
-        <nav class="nav nav-pills">
+        <nav class="nav nav-pills gap-2">
           <li class="nav-item">
-            <a class="nav-link active" title="首页" href="index.html">
+            <a title="首页" class="nav-link active" href="index.html">
               <i class="fal fa-home"></i> 首页
             </a>
           </li>
 
           <li class="nav-item">
             <a
-              class="nav-link"
               title="官网"
-              href="http://www.appcoder.io"
+              class="nav-link"
+              href="http://www.appcoder.io?from=clientNative"
               target="_blank"
             >
               <i class="fal fa-external-link"></i> 官网
@@ -53,21 +53,67 @@
         <!-- 表单 -->
         <form class="form">
           <fieldset>
-            <legend>文件/目录路径</legend>
+            <legend>路径</legend>
 
-            <div class="form-group">
-              <label class="form-label">源</label>
+            <div class="row justify-content-between align-items-center">
+              <div class="col mt-0 form-group">
+                <label class="form-label">源/模板</label>
 
-              <div>
-                <input name="fromPath" class="form-control" required />
+                <div class="input-group">
+                  <div class="input-group-text">
+                    <button
+                      id="pick-source"
+                      type="button"
+                      class="btn btn-default"
+                    >
+                      <span class="fa-stack">
+                        <i class="fas fa-folder fa-stack-2x"></i>
+                        <i
+                          class="fal fa-arrow-from-left fa-stack-1x fa-inverse"
+                        ></i>
+                      </span>
+                    </button>
+                  </div>
+
+                  <input
+                    class="form-control"
+                    name="source-path"
+                    readonly
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">业务</label>
+              <div class="col-1 mt-0 text-center">
+                <span><i class="fas fa-arrow-right"></i></span>
+              </div>
 
-              <div>
-                <input name="toPath" class="form-control" required />
+              <div class="col mt-0 form-group">
+                <label class="form-label">目标</label>
+
+                <div class="input-group">
+                  <div class="input-group-text">
+                    <button
+                      id="pick-target"
+                      type="button"
+                      class="btn btn-default"
+                    >
+                      <span class="fa-stack">
+                        <i class="fas fa-folder fa-stack-2x"></i>
+                        <i
+                          class="fal fa-arrow-to-right fa-stack-1x fa-inverse"
+                        ></i>
+                      </span>
+                    </button>
+                  </div>
+
+                  <input
+                    class="form-control"
+                    name="target-path"
+                    readonly
+                    required
+                  />
+                </div>
               </div>
             </div>
           </fieldset>
@@ -75,27 +121,27 @@
           <fieldset>
             <legend>业务</legend>
 
-            <div class="form-group">
-              <label class="form-label">类编码</label>
+            <div class="form-group row">
+              <label class="form-label col-auto">类编码</label>
 
-              <div>
-                <input name="classCode" class="form-control" require />
+              <div class="col">
+                <input name="classCode" class="form-control" required />
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">类名称</label>
+            <div class="form-group row">
+              <label class="form-label col-auto">类名称</label>
 
-              <div>
-                <input name="className" class="form-control" require />
+              <div class="col">
+                <input name="className" class="form-control" required />
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">类中文名称</label>
+            <div class="form-group row">
+              <label class="form-label col-auto">类中文名称</label>
 
-              <div>
-                <input name="classNameText" class="form-control" require />
+              <div class="col">
+                <input name="classNameText" class="form-control" required />
               </div>
             </div>
           </fieldset>
@@ -123,34 +169,90 @@
               <label class="form-label">路径</label>
 
               <div>
-                <input name="dbUrl" class="form-control" required />
+                <input
+                  name="dbUrl"
+                  class="form-control"
+                  placeholder="数据库连接语句"
+                  value="mysql://root:123456@localhost:3306/xyz"
+                  required
+                />
+
+                <div class="form-text d-flex align-items-start gap-2">
+                  <span><i class="fal fa-info-square"></i></span>
+                  <p>格式为 mysql://USER:PASSWORD@HOST:PORT/DB_NAME</p>
+                </div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">类业务表名称</label>
+            <div class="row justify-content-between align-items-center">
+              <div class="col mt-0 form-group">
+                <label class="form-label">库名</label>
 
-              <div>
-                <input name="tableName" class="form-control" required />
+                <div>
+                  <input
+                    name="dbName"
+                    class="form-control"
+                    placeholder="数据库名称"
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">类业务表主键名称</label>
+              <div class="col mt-0 form-group">
+                <label class="form-label">表名</label>
 
-              <div>
-                <input name="pkName" class="form-control" />
+                <div>
+                  <input
+                    name="tableName"
+                    class="form-control"
+                    placeholder="数据表名称"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="col mt-0 form-group">
+                <label class="form-label">主键名</label>
+
+                <div>
+                  <input
+                    name="pkName"
+                    class="form-control"
+                    placeholder="数据表的主键字段名称"
+                    required
+                  />
+                </div>
               </div>
             </div>
           </fieldset>
 
-          <div class="d-flex justify-content-end mt-1">
-            <button title="重置表单" type="reset" class="btn btn-default">
-              <i class="fal fa-redo"></i> 重置
+          <!-- 表单操作栏 -->
+          <div class="form-footer">
+            <button
+              id="button-reset"
+              title="重置表单"
+              type="reset"
+              class="btn btn-default"
+            >
+              <i class="fal fa-redo"></i> 重置表单
             </button>
 
-            <button title="克隆" type="button" class="btn btn-primary">
-              <i class="fal fa-copy"></i> 克隆
+            <button
+              id="do-clone"
+              title="克隆/创建镜像副本"
+              type="button"
+              class="btn btn-secondary"
+            >
+              <i class="fal fa-code-branch"></i> 克隆
+            </button>
+
+            <button
+              id="do-generate"
+              title="生成/创建定制化副本"
+              type="button"
+              class="btn btn-primary"
+            >
+              <i class="fal fa-code-merge"></i> 生成
             </button>
           </div>
         </form>

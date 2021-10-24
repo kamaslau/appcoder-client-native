@@ -10,6 +10,16 @@
 @import url("../../../node_modules/bootstrap/dist/css/bootstrap.min.css");
 @import url("../../../libs/fontawesome/5.12.1/css/all.min.css");
 
+/**
+ * 全局变量
+ */
+
+$color-light:#f8f9fa;
+
+/**
+ * 全局样式
+ */
+
 html {
   font-size: 16px;
 }
@@ -42,13 +52,29 @@ fieldset {
   margin-bottom: 1.875rem;
 
   &:not(:first-child) {
-    border-top: 1px solid #ced4da;
+    border-top: 1px solid $color-light;
     padding-top: 1.875rem;
   }
-}
 
-.form-group:not(:first-child) {
+  .form-group {
+    &:not(:first-child) {
+      margin-top: 1.25rem;
+    }
+    &.row {
+      label {text-align: end;}
+    }
+  }
+}
+.form-footer {
+  display: flex;
+  background-color: $color-light;
+  justify-content:  flex-end;
   margin-top: 1.25rem;
+  border-radius: .25rem;
+  gap: 1.25rem;
+  padding: .625rem;
+
+  #button-reset {margin-inline-end: auto;}
 }
 
 /** 列表 **/
