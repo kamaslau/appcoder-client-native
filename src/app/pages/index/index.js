@@ -4,38 +4,71 @@
  */
 
 /**
- * 选择源路径
- *
- * @param {*} event
+ * 数据
  */
-const pickSource = event => {
-  console.log('pickSource: ', event)
+let sourcePath = null
+let targetPath = null
 
-  const path = pickPath()
+// 选择源路径
+const pickSource = async () => {
+  console.log('pickSource: ')
 
-  const targetInput = document.querySelector("input[name='source-path']")
-  targetInput.value = path ?? ''
+  sourcePath = await pickPath()
 
-  console.log(targetInput.value)
+  if (sourcePath !== null) document.querySelector("input[name='source-path']").value = sourcePath // 更新字段值
+}
+
+// 选择目标路径
+const pickTarget = async () => {
+  console.log('pickTarget: ')
+
+  targetPath = await pickPath()
+
+  if (targetPath !== null) document.querySelector("input[name='target-path']").value = targetPath // 更新字段值
 }
 
 /**
  * 选择路径
  */
-const pickPath = () => {
+const pickPath = async () => {
   console.log('pickPath: ')
 
-  const result = null
-  return result
+  let path = null
+
+  await remote.dialog
+    .showOpenDialog({
+      title: '请指定源文件夹',
+      buttonLabel: '选择文件夹',
+      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
+      message: '请指定源文件所在的目录；该目录下的所有文件将被克隆' // [macOS]显示在输入框上方
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        path = result.filePaths[0]
+      } else {
+        console.warn('用户取消选择')
+      }
+    })
+    .catch((error) => {
+      console.error('pickPath: ', error)
+    })
+
+  console.log('path: ', path)
+  return path
 }
 
-const doClone = () => {}
+// 克隆
+const doClone = () => {
+  console.log(listFilesInDir(sourcePath))
+}
+
+// 生成
 const doGenerate = () => {}
 
 // 绑定事件监听器
 const mapEventListeners = () => {
-  document.getElementById('pick-source').addEventListener('click', pickSource)
-  // document.getElementById('pick-target').addEventListener('click', pickTarget)
+  document.getElementById('pick-source').addEventListener('click', async (event) => await pickSource())
+  document.getElementById('pick-target').addEventListener('click', async (event) => await pickTarget())
 
   document.getElementById('do-clone').addEventListener('click', doClone)
   document.getElementById('do-generate').addEventListener('click', doGenerate)
