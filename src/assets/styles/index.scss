@@ -1,0 +1,71 @@
+/**
+ * 统一样式文件
+ * 本应用为本地应用，不需要考虑import的性能问题，反而采用统一的样式配置文件在部署和开发时都更易于管理样式模块。
+ * 重要！绝对不要引入任何未授权的非开源字体，包括但不限于SanFrancisco、NewYork等苹果字体，存在合规风险！
+ */
+@charset "utf-8";
+@viewport {
+  width: device-width;
+}
+@import url("../../../node_modules/bootstrap/dist/css/bootstrap.min.css");
+@import url("../../../libs/fontawesome/5.12.1/css/all.min.css");
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-size: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  color: #212529;
+  background-color: #fff;
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+/** 表单 **/
+fieldset {
+  margin-bottom: 1.875rem;
+
+  &:not(:first-child) {
+    border-top: 1px solid #ced4da;
+    padding-top: 1.875rem;
+  }
+}
+
+.form-group:not(:first-child) {
+  margin-top: 1.25rem;
+}
+
+/** 列表 **/
+dt {
+  text-align: end;
+}
+dd {
+  text-align: start;
+}
+
+/** 按钮 **/
+.btn {
+  white-space: nowrap;
+}
+
+/**
+ * 首页/工作台
+ */
+#page-main-index {
+}

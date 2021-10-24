@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8" />
+    <title>首页</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <link rel="stylesheet" href="../../../static/styles/index.css" />
+    <style>
+      /* DEV ONLY: 页内样式仅用于开发/测试，生产环境的样式声明应移入主样式文件 ↑ */
+    </style>
+  </head>
+
+  <body id="page-main-index">
+    <noscript class="container-fluid">
+      <div class="alert alert-warning">
+        <p>您的浏览器未正常工作，请检查是否关闭了JavaScript相关功能。</p>
+      </div>
+    </noscript>
+
+    <header class="mb-4 bg-dark text-white">
+      <div
+        class="container d-flex justify-content-between align-items-center py-3"
+      >
+        <h1>AppCoder</h1>
+
+        <nav class="nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link active" title="首页" href="index.html">
+              <i class="fal fa-home"></i> 首页
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              title="官网"
+              href="http://www.appcoder.io"
+              target="_blank"
+            >
+              <i class="fal fa-external-link"></i> 官网
+            </a>
+          </li>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Actural Page Content -->
+    <main>
+      <div class="container">
+        <!-- 表单 -->
+        <form class="form">
+          <fieldset>
+            <legend>文件/目录路径</legend>
+
+            <div class="form-group">
+              <label class="form-label">源</label>
+
+              <div>
+                <input name="fromPath" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">业务</label>
+
+              <div>
+                <input name="toPath" class="form-control" required />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>业务</legend>
+
+            <div class="form-group">
+              <label class="form-label">类编码</label>
+
+              <div>
+                <input name="classCode" class="form-control" require />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">类名称</label>
+
+              <div>
+                <input name="className" class="form-control" require />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">类中文名称</label>
+
+              <div>
+                <input name="classNameText" class="form-control" require />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>数据库</legend>
+
+            <div class="form-group">
+              <div>
+                <div class="form-check form-switch">
+                  <input
+                    id="parseFromDB"
+                    type="checkbox"
+                    class="form-check-input text-danger"
+                  />
+
+                  <label class="form-check-label" for="parseFromDB">
+                    从数据库表解析结构</label
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">路径</label>
+
+              <div>
+                <input name="dbUrl" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">类业务表名称</label>
+
+              <div>
+                <input name="tableName" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">类业务表主键名称</label>
+
+              <div>
+                <input name="pkName" class="form-control" />
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="d-flex justify-content-end mt-1">
+            <button title="重置表单" type="reset" class="btn btn-default">
+              <i class="fal fa-redo"></i> 重置
+            </button>
+
+            <button title="克隆" type="button" class="btn btn-primary">
+              <i class="fal fa-copy"></i> 克隆
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <!-- end content -->
+  </body>
+
+  <script defer src="../../services/index.js"></script>
+  <script defer src="./index.js"></script>
+</html>
