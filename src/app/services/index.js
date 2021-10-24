@@ -45,6 +45,8 @@ const touchFile = (filePath) => {
  * @returns 所有文件的本地路径[]
  */
  const listFilesInDir = async (targetDir = null) => {
+  console.log('listFilesInDir: ', targetDir)
+
   if (targetDir === null) return 
 
   // Fetch temp demo list
@@ -60,35 +62,69 @@ const touchFile = (filePath) => {
   } catch (error) {
     console.error('listFilesInDir error: ', error)
   }
-  // console.log('result: ', result)
+  console.log('result: ', result)
 
   return result
 }
 
-/**
- * TODO 迭代创建路径下所有目录及文件的副本，并移动到目标路径
- */
-const clonePath = async (
-  sourcePath,
-  targetPath
-) => {
-  // 获取当前路径下的所有文件
-  const files = listFilesInDir(sourcePath)
-  if (files.length === 0) return
+// 遍历并处理路径
+const processPath = async (rootPath, fileOp = null, dirOp = null) => {
+  console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
 
-  // 迭代创建路径下所有目录及文件的副本，并移动到目标路径
+    // 获取当前路径下的所有文件
+    const paths = await listFilesInDir(rootPath)
+    if (paths.length === 0) return
+  
   try {
-    files.forEach((file) => {
-      // 文件名即为该文件的创建时间戳
-      if (parseInt(file) < minTimestamp) fse.remove(path.join(paths.generateDir, dir, file)).catch(error => console.log('pruneTemp error on fse.remove: ', error))
+    paths.forEach((path) => {
+      const pathState = fs.lstatSync(path)
+
+      if (pathState.isDirectory()) {
+        // 继续遍历目录
+        // console.log(`${path} is a directory`)
+
+        if (typeof dirOp === 'function') dirOp(path)
+
+        processPath(path, fileOp, dirOp) // 迭代子目录
+      } else if (pathState.isFile()) {
+        // 处理文件
+        // console.log(`${path} is a file`)
+
+        if (typeof fileOp === 'function') fileOp(path)
+      }
     })
   } catch (error) {
-    console.error(
-      'clonePath error: ',
-      error
+    console.error('clonePath error: ', error)
+  }
+}
+
+/**
+ * 克隆路径
+ */
+const clonePath = async (
+  sourcePath = null,
+  targetPath = null
+) => {
+  console.log('clonePath: ', sourcePath, targetPath)
+
+  if (!sourcePath || !sourcePath) return
+
+  // 文件操作
+  const fileOp = (filePath) => {
+    // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
+    const relativePath = filePath.substring(sourcePath.length)
+
+    fs.copy(
+      filePath,
+      path.join(
+        targetPath,
+        relativePath
+      )
     )
   }
 
+  // 迭代处理根目录下的路径
+  await processPath(sourcePath, fileOp)
 }
 
 // 检查配置文件是否存在，若否则迭代创建文件（含路径），一般为初次启动使用

@@ -125,7 +125,7 @@
               <label class="form-label col-auto">类编码</label>
 
               <div class="col">
-                <input name="classCode" class="form-control" required />
+                <input name="class-code" class="form-control" required />
               </div>
             </div>
 
@@ -133,15 +133,20 @@
               <label class="form-label col-auto">类名称</label>
 
               <div class="col">
-                <input name="className" class="form-control" required />
+                <input name="class-name" class="form-control" required />
               </div>
             </div>
 
             <div class="form-group row">
-              <label class="form-label col-auto">类中文名称</label>
+              <label class="form-label col-auto">类本地化名称</label>
 
               <div class="col">
-                <input name="classNameText" class="form-control" required />
+                <input
+                  name="class-name-locale"
+                  class="form-control"
+                  placeholder="类名称的语言本地化（例如中文）"
+                  required
+                />
               </div>
             </div>
           </fieldset>
@@ -153,12 +158,12 @@
               <div>
                 <div class="form-check form-switch">
                   <input
-                    id="parseFromDB"
+                    id="parseDB"
                     type="checkbox"
                     class="form-check-input text-danger"
                   />
 
-                  <label class="form-check-label" for="parseFromDB">
+                  <label class="form-check-label" for="parseDB">
                     从数据库表解析结构</label
                   >
                 </div>
@@ -170,9 +175,8 @@
 
               <div>
                 <input
-                  name="dbUrl"
+                  name="url"
                   class="form-control"
-                  placeholder="数据库连接语句"
                   value="mysql://root:123456@localhost:3306/xyz"
                   required
                 />
@@ -190,7 +194,7 @@
 
                 <div>
                   <input
-                    name="dbName"
+                    name="db"
                     class="form-control"
                     placeholder="数据库名称"
                     required
@@ -203,7 +207,7 @@
 
                 <div>
                   <input
-                    name="tableName"
+                    name="table"
                     class="form-control"
                     placeholder="数据表名称"
                     required
@@ -216,7 +220,7 @@
 
                 <div>
                   <input
-                    name="pkName"
+                    name="pk"
                     class="form-control"
                     placeholder="数据表的主键字段名称"
                     required
