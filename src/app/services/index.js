@@ -2,6 +2,7 @@
  * IoC
  */
 const fs = require('fs-extra')
+const JSZip = require("jszip")
 const os = require('os')
 const path = require('path')
 const { shell, ipcRenderer } = require('electron')
@@ -48,14 +49,35 @@ const touchFile = (filePath) => {
 }
 
 /**
+ * 替换内容中的占位字符串为实际值
+ *
+ * @param {string} context 内容
+ * @param {string} searchValue 占位内容
+ * @param {string} replaceValue 目标值
+ */
+const replaceMatchedString = (context, searchValue, replaceValue) => {
+  // console.log('replaceMatchedString: ', context, searchValue, replaceValue)
+
+  let result = ''
+
+  try {
+    result = context.replaceAll(searchValue, replaceValue)
+  } catch (error) {
+    console.error(error)
+  }
+
+  return result
+}
+
+/**
  * 读取目标文件夹下文件列表
  * @param targetDir 目标本地文件夹路径
  * @returns 所有文件的本地路径[]
  */
- const listFilesInDir = async (targetDir = null) => {
+const listFilesInDir = async (targetDir = null) => {
   console.log('listFilesInDir: ', targetDir)
 
-  if (targetDir === null) return 
+  if (targetDir === null) return
 
   // Fetch temp demo list
   let result = []
@@ -79,10 +101,10 @@ const touchFile = (filePath) => {
 const processPath = async (rootPath, fileOp = null, dirOp = null) => {
   console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
 
-    // 获取当前路径下的所有文件
-    const paths = await listFilesInDir(rootPath)
-    if (paths.length === 0) return
-  
+  // 获取当前路径下的所有文件
+  const paths = await listFilesInDir(rootPath)
+  if (paths.length === 0) return
+
   try {
     paths.forEach((path) => {
       const pathState = fs.lstatSync(path)
@@ -111,24 +133,48 @@ const processPath = async (rootPath, fileOp = null, dirOp = null) => {
  */
 const clonePath = async (
   sourcePath = null,
-  targetPath = null
+  targetPath = null,
+  payload = null
 ) => {
-  console.log('clonePath: ', sourcePath, targetPath)
+  console.log('clonePath: ', sourcePath, targetPath, payload)
 
   if (!sourcePath || !sourcePath) return
 
   // 文件操作
-  const fileOp = (filePath) => {
+  const fileOp = async (filePath) => {
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
     const relativePath = filePath.substring(sourcePath.length)
+    const targetFilePath = path.join(targetPath, relativePath)
 
-    fs.copy(
-      filePath,
-      path.join(
-        targetPath,
-        relativePath
-      )
-    )
+    if (payload !== null) {
+      console.log('create product')
+
+      let pageContent = null
+
+      // 读取当前文件内容为模板
+      pageContent = await fs.readFile(filePath, 'utf8')
+
+      // 替换模板中的变量标识为实际值
+      Object.keys(payload).forEach(name => {
+        if (!payload[name]) return
+
+        pageContent = replaceMatchedString(
+          pageContent,
+          `[[${name}]]`,
+          payload[name]
+        )
+      })
+
+      // 创建新文件
+      console.log('pageContent: ', pageContent)
+      fs.ensureFile(targetFilePath).then(() => {
+        fs.writeFile(targetFilePath, pageContent)
+      })
+    } else {
+      console.log('create mirror')
+
+      fs.copy(filePath, targetFilePath) // 创建镜像
+    }
   }
 
   // 迭代处理根目录下的路径

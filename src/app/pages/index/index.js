@@ -7,15 +7,13 @@
  * 数据
  */
 // 路径
-let sourcePath = null
-let targetPath = appPathDict.desktop
-// let sourcePath = 'D:\\SourceTreeData\\nirong-api\\template\\style\\149\\default'
-// let targetPath = 'C:\\Users\\kamas\\Desktop\\appCoderTest'
+let sourcePath = appPathDict.desktop + '\\appCoderTestSource'
+let targetPath = appPathDict.desktop + '\\appCoderTestTarget'
 // 业务
 const biz = {
-  classCode: null,
-  className: null,
-  classNameLocale: null
+  'class-code': null,
+  'class-name': null,
+  'class-name-locale': null
 }
 // 数据库
 const db = {
@@ -70,24 +68,54 @@ const pickPath = async () => {
   return path
 }
 
-// 克隆
+/**
+ * TODO 打包
+ *
+ * 直接创建压缩包到目标路径，不处理文件
+ */
+const doPack = async () => {
+  console.log('doPack: ')
+
+  if (!sourcePath || !sourcePath) alert('需要指定源&目标路径')
+}
+
+/**
+ * 克隆
+ *
+ * 直接创建文件拷贝到目标路径，不处理文件
+ */
 const doClone = async () => {
   console.log('doClone: ')
 
   if (!sourcePath || !sourcePath) alert('需要指定源&目标路径')
 
   await clonePath(sourcePath, targetPath)
+}
+
+/**
+ * 生成
+ *
+ * 使用源文件作为模板来生成新文件
+ */
+const doGenerate = async () => {
+  console.log('doClone: ')
+
+  if (!sourcePath || !sourcePath) alert('需要指定源&目标路径')
+
+  Object.keys(biz).forEach(name => { biz[name] = getInput(name) })
+
+  await clonePath(sourcePath, targetPath, biz)
   // const result = await clonePath(sourcePath, targetPath)
   // console.log(result)
 }
-
-// TODO 生成
-const doGenerate = async () => {}
 
 // 更新字段值
 const setInput = (name, value = '') => {
   document.querySelector(`input[name='${name}']`).value = value
 }
+
+// 获取字段值
+const getInput = (name) => document.querySelector(`input[name='${name}']`).value
 
 // 渲染页面内容
 const renderContent = () => {
@@ -102,6 +130,7 @@ const bindEventListeners = () => {
   document.getElementById('pick-source').addEventListener('click', async (event) => await pickSource())
   document.getElementById('pick-target').addEventListener('click', async (event) => await pickTarget())
 
+  document.getElementById('do-pack').addEventListener('click', async (event) => await doPack())
   document.getElementById('do-clone').addEventListener('click', async (event) => await doClone())
   document.getElementById('do-generate').addEventListener('click', async (event) => await doGenerate())
 }

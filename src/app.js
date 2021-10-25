@@ -1,3 +1,6 @@
+// https://github.com/electron/windows-installer#handling-squirrel-events
+if (require('electron-squirrel-startup')) return
+
 // 载入，并应用env.js环境配置文件
 const _ENV = require('./env.json')
 // console.log('_ENV: ', _ENV)
