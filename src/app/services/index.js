@@ -2,6 +2,7 @@
  * IoC
  */
 const fs = require('fs-extra')
+const os = require('os')
 const path = require('path')
 const { shell, ipcRenderer } = require('electron')
 const remote = require('@electron/remote')
@@ -17,15 +18,22 @@ console.log('isDev: ', isDev)
 
 /**
  * 应用路径词典
+ *
+ * https://www.electronjs.org/docs/latest/api/app#appgetpathname
  */
 const appPathDict = {
   config: remote.app.getPath('userData'), // 本地安装路径
   data: path.join(remote.app.getPath('appData'), 'com.kamaslau.AppCoder'), // 本地配置路径
+  desktop: remote.app.getPath('desktop'), // 桌面文件夹路径
+  documents: remote.app.getPath('documents'), // 用户文档文件夹路径
+  downloads: remote.app.getPath('downloads'), // 下载文件夹路径
+  recent: os.platform() === 'win32' ? remote.app.getPath('recent') : 'N/A', // 【仅Windows】“最近”文件夹路径
   root: path.join(__dirname, '../../'), // 根路径；即app.js所在路径
   libs: path.join(__dirname, '../../libs'), // 第三方库
   page: path.join(__dirname, '../../page'), // 页面；重构时可以此作为前端框架的组件目录
   static: path.join(__dirname, '../../../static') // 静态资源（图片、样式、字体、模板文件等）
 }
+console.log('appPathDict: ', appPathDict)
 
 // 应用主配置文件
 const appFile = path.join(appPathDict.data, 'config.json') // 生成配置文件

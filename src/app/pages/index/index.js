@@ -8,7 +8,7 @@
  */
 // 路径
 let sourcePath = null
-let targetPath = null
+let targetPath = appPathDict.desktop
 // let sourcePath = 'D:\\SourceTreeData\\nirong-api\\template\\style\\149\\default'
 // let targetPath = 'C:\\Users\\kamas\\Desktop\\appCoderTest'
 // 业务
