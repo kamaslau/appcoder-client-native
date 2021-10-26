@@ -7,8 +7,8 @@
  * 数据
  */
 // 路径
-let sourcePath = isDev ? appPathDict.desktop + '\\appCoderTestSource' : ''
-let targetPath = isDev ? appPathDict.desktop + '\\appCoderTestTarget' : ''
+let sourcePath = isDev ? appPathDict[process.env.SOURCE_DIR] : ''
+let targetPath = isDev ? appPathDict[process.env.TARGET_DIR] : ''
 // 业务
 const biz = {
   'class-code': null,
@@ -121,16 +121,17 @@ const getInput = (name) => document.querySelector(`input[name='${name}']`).value
 
 // 渲染页面内容
 const renderContent = () => {
+  document.getElementById('app-name').innerText = document.getElementById('app-name').title = process.env.NAME
+  document.getElementById('app-version').innerText = process.env.VERSION
+
   const dataMap = { 'source-path': sourcePath, 'target-path': targetPath }
-  Object.keys(dataMap).forEach(
-    name => setInput(name, dataMap[name])
-  )
+  for (const name of Object.keys(dataMap)) setInput(name, dataMap[name])
 }
 
 // 绑定事件监听器
 const bindEventListeners = () => {
-  document.getElementById('sample-source-path').innerText = appPathDict.downloads
-  document.getElementById('target-source-path').innerText = appPathDict.documents
+  document.getElementById('sample-source-path').innerText = appPathDict.documents
+  document.getElementById('target-source-path').innerText = appPathDict.desktop
 
   document.getElementById('pick-source').addEventListener('click', async (event) => await pickSource())
   document.getElementById('pick-target').addEventListener('click', async (event) => await pickTarget())

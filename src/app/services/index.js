@@ -2,7 +2,7 @@
  * IoC
  */
 const fs = require('fs-extra')
-const JSZip = require("jszip")
+const JSZip = require('jszip') // https://stuk.github.io/jszip/documentation/examples.htmls
 const os = require('os')
 const path = require('path')
 const { shell, ipcRenderer } = require('electron')
@@ -75,7 +75,7 @@ const replaceMatchedString = (context, searchValue, replaceValue) => {
  * @returns 所有文件的本地路径[]
  */
 const listFilesInDir = async (targetDir = null) => {
-  console.log('listFilesInDir: ', targetDir)
+  // console.log('listFilesInDir: ', targetDir)
 
   if (targetDir === null) return
 
@@ -98,72 +98,77 @@ const listFilesInDir = async (targetDir = null) => {
 }
 
 // 遍历并处理路径
-const processPath = async (rootPath, fileOp = null, dirOp = null) => {
-  console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
+const processPath = async (rootPath, fileOp = async () => {}, dirOp = async () => {}) => {
+  // console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
 
   // 获取当前路径下的所有文件
   const paths = await listFilesInDir(rootPath)
+
   if (paths.length === 0) return
 
   try {
-    paths.forEach((path) => {
+    for (const path of paths) {
       const pathState = fs.lstatSync(path)
 
       if (pathState.isDirectory()) {
         // 继续遍历目录
         // console.log(`${path} is a directory`)
 
-        if (typeof dirOp === 'function') dirOp(path)
+        if (typeof dirOp === 'function') await dirOp(path)
 
-        processPath(path, fileOp, dirOp) // 迭代子目录
+        await processPath(path, fileOp, dirOp) // 迭代子目录
       } else if (pathState.isFile()) {
         // 处理文件
         // console.log(`${path} is a file`)
 
-        if (typeof fileOp === 'function') fileOp(path)
+        if (typeof fileOp === 'function') await fileOp(path)
       }
-    })
+    }
   } catch (error) {
-    console.error('clonePath error: ', error)
+    console.error('processPath error: ', error)
   }
 }
 
 /**
  * 打包路径
  */
-const zip = new JSZip()
 const packPath = async (sourcePath, targetPath) => {
-  console.log('packPath: ', sourcePath, targetPath)
+  console.log(`packPath: ${sourcePath} -> ${targetPath}`)
 
   if (!sourcePath || !sourcePath) return
 
-  // TODO 文件操作
+  const zip = new JSZip()
+  // zip.file('ziptest.txt', 'zip content') // DEMO only
+
+  // 文件操作
   const fileOp = async (filePath) => {
+    // console.log('create zip file item')
+
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
     const relativePath = filePath.substring(sourcePath.length)
-    const targetFilePath = path.join(targetPath, relativePath)
-
-    console.log('create zip file item')
-
-    let pageContent = null
 
     // 读取当前文件内容
-    pageContent = await fs.readFile(filePath, 'utf8')
+    const pageContent = await fs.readFile(filePath, 'utf8')
 
     // 将文件内容添加到zip实例
-    zip.file(path.basename(targetFilePath), pageContent)
+    zip.file(relativePath.substring(1), pageContent)
+    console.log('zip is now: ', zip)
   }
 
   // 迭代处理根目录下的路径
   await processPath(sourcePath, fileOp)
 
-  // TODO 在内存中生成zip文件
-  const zipFile = await zip.generateAsync({ type: "nodebuffer" })
+  // 在内存中生成zip文件
+  const zipFileContent = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 9 } })
+  console.log(zip.files)
 
   // 写入新文件到目标路径
-  const targetFilePath = targetPath + '/packed.zip'
+  const targetFilePath = `${targetPath}/${path.basename(sourcePath)}_clone_packed.zip`
+  console.log('targetFilePath: ', targetFilePath)
   fs.ensureFile(targetFilePath).then(() => {
-    fs.writeFile(targetFilePath, zipFile)
+    fs.writeFile(targetFilePath, zipFileContent)
+  }).then(() => {
+    shell.openPath(targetPath) // 在文件管理器中打开目标路径
   })
 }
 
@@ -175,7 +180,7 @@ const clonePath = async (
   targetPath = null,
   payload = null
 ) => {
-  console.log('clonePath: ', sourcePath, targetPath, payload)
+  console.log(`clonePath: ${sourcePath} -> ${targetPath}`, payload)
 
   if (!sourcePath || !sourcePath) return
 
@@ -218,6 +223,8 @@ const clonePath = async (
 
   // 迭代处理根目录下的路径
   await processPath(sourcePath, fileOp)
+
+  shell.openPath(targetPath) // 在文件管理器中打开目标路径
 }
 
 // 检查配置文件是否存在，若否则迭代创建文件（含路径），一般为初次启动使用

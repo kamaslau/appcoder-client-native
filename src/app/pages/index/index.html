@@ -24,7 +24,8 @@
       <div
         class="container d-flex justify-content-between align-items-center py-3"
       >
-        <h1>AppCoder</h1>
+        <h1 id="app-name">AppCoder</h1>
+        <sup title="版本号" id="app-version" class="badge bg-light text-dark"></sup>
 
         <nav class="nav nav-pills gap-2">
           <li class="nav-item">
@@ -83,7 +84,7 @@
                   />
                 </div>
 
-                <div class="form-text">
+                <div class="form-text d-flex align-items-start gap-2">
                   <span><i class="fal fa-info-square"></i></span>
                   <p>例如 <span id="sample-source-path"></span></p>
                 </div>
@@ -120,9 +121,9 @@
                   />
                 </div>
 
-                <div class="form-text">
+                <div class="form-text d-flex align-items-start gap-2">
+                  <span><i class="fal fa-info-square"></i></span>
                   <p>例如 <span id="target-source-path"></span></p>
-                </div>
               </div>
             </div>
           </fieldset>
@@ -160,8 +161,14 @@
             </div>
           </fieldset>
 
-          <fieldset disabled>
-            <legend>数据库</legend>
+          <fieldset class="d-none">
+            <legend>
+              数据库
+              <div class="d-inline-flex">
+                <span class="badge text-info"><i class="fal fa-info-square"></i> 高级功能</span>
+                <span class="badge text-warning"><i class="fal fa-info-square"></i> 开发中</span>
+              </div>
+            </legend>
 
             <div class="form-group">
               <div>
@@ -247,7 +254,7 @@
               type="reset"
               class="btn btn-default"
             >
-              <i class="fal fa-redo"></i> 重置表单
+              <i class="fal fa-redo"></i> 重置
             </button>
 
             <button
