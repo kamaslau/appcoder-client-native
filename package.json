@@ -74,6 +74,6 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-window-state": "^5.0.3",
     "fs-extra": "^10",
-    "jszip": "^3.7.1"
+    "jszip": "^3"
   }
 }
