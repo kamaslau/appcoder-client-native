@@ -7,8 +7,8 @@
  * 数据
  */
 // 路径
-let sourcePath = appPathDict.desktop + '\\appCoderTestSource'
-let targetPath = appPathDict.desktop + '\\appCoderTestTarget'
+let sourcePath = isDev ? appPathDict.desktop + '\\appCoderTestSource' : ''
+let targetPath = isDev ? appPathDict.desktop + '\\appCoderTestTarget' : ''
 // 业务
 const biz = {
   'class-code': null,
@@ -77,6 +77,8 @@ const doPack = async () => {
   console.log('doPack: ')
 
   if (!sourcePath || !sourcePath) alert('需要指定源&目标路径')
+
+  await packPath(sourcePath, targetPath)
 }
 
 /**
@@ -127,6 +129,9 @@ const renderContent = () => {
 
 // 绑定事件监听器
 const bindEventListeners = () => {
+  document.getElementById('sample-source-path').innerText = appPathDict.downloads
+  document.getElementById('target-source-path').innerText = appPathDict.documents
+
   document.getElementById('pick-source').addEventListener('click', async (event) => await pickSource())
   document.getElementById('pick-target').addEventListener('click', async (event) => await pickTarget())
 

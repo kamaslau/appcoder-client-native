@@ -129,6 +129,45 @@ const processPath = async (rootPath, fileOp = null, dirOp = null) => {
 }
 
 /**
+ * 打包路径
+ */
+const zip = new JSZip()
+const packPath = async (sourcePath, targetPath) => {
+  console.log('packPath: ', sourcePath, targetPath)
+
+  if (!sourcePath || !sourcePath) return
+
+  // TODO 文件操作
+  const fileOp = async (filePath) => {
+    // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
+    const relativePath = filePath.substring(sourcePath.length)
+    const targetFilePath = path.join(targetPath, relativePath)
+
+    console.log('create zip file item')
+
+    let pageContent = null
+
+    // 读取当前文件内容
+    pageContent = await fs.readFile(filePath, 'utf8')
+
+    // 将文件内容添加到zip实例
+    zip.file(path.basename(targetFilePath), pageContent)
+  }
+
+  // 迭代处理根目录下的路径
+  await processPath(sourcePath, fileOp)
+
+  // TODO 在内存中生成zip文件
+  const zipFile = await zip.generateAsync({ type: "nodebuffer" })
+
+  // 写入新文件到目标路径
+  const targetFilePath = targetPath + '/packed.zip'
+  fs.ensureFile(targetFilePath).then(() => {
+    fs.writeFile(targetFilePath, zipFile)
+  })
+}
+
+/**
  * 克隆路径
  */
 const clonePath = async (
