@@ -145,13 +145,13 @@ const packPath = async (sourcePath, targetPath) => {
     // console.log('create zip file item')
 
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
-    const relativePath = filePath.substring(sourcePath.length)
+    const relativePath = filePath.substring(sourcePath.length).substring(1) // 移除开头的冗余"/"字符
 
     // 读取当前文件内容
     const pageContent = await fs.readFile(filePath, 'utf8')
 
     // 将文件内容添加到zip实例
-    zip.file(relativePath.substring(1), pageContent)
+    zip.file(relativePath, pageContent)
     console.log('zip is now: ', zip)
   }
 
@@ -160,14 +160,14 @@ const packPath = async (sourcePath, targetPath) => {
 
   // 在内存中生成zip文件
   const zipFileContent = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 9 } })
-  console.log(zip.files)
+  // console.log(zip.files)
 
   // 写入新文件到目标路径
   const targetFilePath = `${targetPath}/${path.basename(sourcePath)}_clone_packed.zip`
-  console.log('targetFilePath: ', targetFilePath)
   fs.ensureFile(targetFilePath).then(() => {
     fs.writeFile(targetFilePath, zipFileContent)
   }).then(() => {
+    console.log('zip file path is targetFilePath: ', targetFilePath)
     shell.openPath(targetPath) // 在文件管理器中打开目标路径
   })
 }
@@ -188,36 +188,41 @@ const clonePath = async (
   const fileOp = async (filePath) => {
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
     const relativePath = filePath.substring(sourcePath.length)
-    const targetFilePath = path.join(targetPath, relativePath)
+    let targetFilePath = ''
 
-    if (payload !== null) {
+    if (payload === null) {
+      // 创建镜像
+      console.log('create mirror')
+
+      targetFilePath = path.join(targetPath, relativePath)
+      fs.copy(filePath, targetFilePath)
+    } else {
+      // 创建新文件
       console.log('create product')
 
-      let pageContent = null
+      targetFilePath = path.join(targetPath, payload.name, relativePath)
 
       // 读取当前文件内容为模板
-      pageContent = await fs.readFile(filePath, 'utf8')
+      let pageContent = await fs.readFile(filePath, 'utf8')
 
-      // 替换模板中的变量标识为实际值
-      Object.keys(payload).forEach(name => {
-        if (!payload[name]) return
+      // 处理特定后缀名的文件
+      if (['.js', '.json', '.html'].includes(path.extname(filePath))) {
+        // 替换模板中的变量标识（[[变量名]]）为实际值
+        Object.keys(payload).forEach(name => {
+          if (!payload[name]) return
 
-        pageContent = replaceMatchedString(
-          pageContent,
-          `[[${name}]]`,
-          payload[name]
-        )
-      })
+          pageContent = replaceMatchedString(
+            pageContent,
+            `[[${name}]]`,
+            payload[name]
+          )
+        })
+      }
 
-      // 创建新文件
       console.log('pageContent: ', pageContent)
       fs.ensureFile(targetFilePath).then(() => {
         fs.writeFile(targetFilePath, pageContent)
       })
-    } else {
-      console.log('create mirror')
-
-      fs.copy(filePath, targetFilePath) // 创建镜像
     }
   }
 

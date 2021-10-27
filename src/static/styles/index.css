@@ -46,8 +46,8 @@ fieldset {
   margin-bottom: 1.875rem;
 }
 fieldset:not(:first-child) {
+  margin-top: 1.875rem;
   border-top: 1px solid #f8f9fa;
-  padding-top: 1.875rem;
 }
 fieldset .form-group:not(:first-child) {
   margin-top: 1.25rem;
@@ -62,7 +62,7 @@ fieldset .form-group.row label {
   justify-content: flex-end;
   margin-top: 1.25rem;
   border-radius: 0.25rem;
-  gap: 1.25rem;
+  gap: 0.625rem;
   padding: 0.625rem;
 }
 .form-footer #button-reset {
@@ -88,6 +88,18 @@ dd {
  */
 #page-main-index header nav {
   margin-left: auto;
+}
+#page-main-index main .biz-item {
+  display: flex;
+  margin: 20px 0 20px 20px;
+}
+#page-main-index main .biz-item .biz-item-ops {
+  padding: 0 10px;
+}
+#page-main-index main .biz-item .biz-item-content {
+  flex-grow: 1;
+  min-width: 240px;
+  padding: 10px;
 }
 
 /*# sourceMappingURL=index.css.map */

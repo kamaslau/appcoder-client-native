@@ -133,37 +133,52 @@
           <fieldset>
             <legend>业务</legend>
 
-            <div class="form-group row">
-              <label class="form-label col-auto">类编码</label>
+            <button @click.prevent="addBiz" title="添加业务" type="button" class="btn btn-light">添加</button>
 
-              <div class="col">
-                <input name="class-code" class="form-control" required />
+            <!-- 业务配置项 -->
+            <div v-for="(item, index) in bizs" :index="index" class="biz-item bg-light">
+              <!-- 业务配置项操作 -->
+              <div class="biz-item-ops">
+                <button @click.prevent="removeBiz(index)" type="button" class="btn text-danger">
+                  <i title="移除当前项" class="fal fa-times"></i>
+                </button>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label class="form-label col-auto">类名称</label>
-
-              <div class="col">
-                <input name="class-name" class="form-control" required />
-              </div>
-            </div>
-
-            <div class="form-group row">
-              <label class="form-label col-auto">类本地化名称</label>
-
-              <div class="col">
-                <input
-                  name="class-name-locale"
-                  class="form-control"
-                  placeholder="类名称的语言本地化（例如中文）"
-                  required
-                />
+              <!-- 业务配置项内容 -->
+              <div class="biz-item-content">
+                <div class="form-group row">
+                  <label class="form-label col-auto">编码</label>
+    
+                  <div class="col">
+                    <input v-model="item.code" class="form-control" />
+                  </div>
+                </div>
+    
+                <div class="form-group row">
+                  <label class="form-label col-auto">名称 *</label>
+    
+                  <div class="col">
+                    <input v-model="item.name" class="form-control" required />
+                  </div>
+                </div>
+  
+                <div class="form-group row">
+                  <label class="form-label col-auto">本地化名称 *</label>
+    
+                  <div class="col">
+                    <input
+                      v-model="item.nameLocale"
+                      class="form-control"
+                      placeholder="类名称的语言本地化（例如中文）"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </fieldset>
 
-          <fieldset disabled>
+          <fieldset class="d-none">
             <legend>
               数据库
               <div class="d-inline-flex">
@@ -222,7 +237,7 @@
               </div>
 
               <div class="col mt-0 form-group">
-                <label class="form-label">表名</label>
+                <label class="form-label">表名 *</label>
 
                 <div>
                   <input
@@ -282,6 +297,7 @@
 
             <button
               @click.stop="doGenerate"
+              :disabled="bizs.length === 0 || bizs[0].name.length === 0"
               title="生成/创建定制化副本"
               type="button"
               class="btn btn-primary"

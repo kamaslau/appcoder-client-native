@@ -10,16 +10,6 @@ const Vue = require('vue')
 // 路径
 let sourcePath = isDev ? appPathDict[process.env.SOURCE_DIR] : ''
 let targetPath = isDev ? appPathDict[process.env.TARGET_DIR] : ''
-// 业务
-const biz = {
-  'class-code': null,
-  'class-name': null,
-  'class-name-locale': null
-}
-// 数据库
-const db = {
-  url: null, db: null, table: null, pk: null
-}
 
 // 选择源路径
 const pickSource = async () => {
@@ -159,12 +149,22 @@ const App = {
       if (targetPath !== null) document.querySelector("input[name='target-path']").value = targetPath // 更新字段值
     },
 
+    // 添加一组业务配置
+    addBiz () {
+      this.bizs.push({ ...this.bizItem })
+    },
+
+    // 添加一组业务配置
+    removeBiz (index) {
+      this.bizs.splice(index, 1)
+    },
+
     /**
      * 打包
      *
      * 直接创建压缩包到目标路径，不处理文件
      */
-    doPack: async () => {
+    async doPack () {
       console.log('doPack: ')
 
       if (!sourcePath || !sourcePath) window.alert('需要指定源&目标路径')
@@ -177,7 +177,7 @@ const App = {
      *
      * 直接创建文件拷贝到目标路径，不处理文件
      */
-    doClone: async () => {
+    async doClone () {
       console.log('doClone: ')
 
       if (!sourcePath || !sourcePath) window.alert('需要指定源&目标路径')
@@ -190,18 +190,19 @@ const App = {
      *
      * 使用源文件作为模板来生成新文件
      */
-    doGenerate: async () => {
+    async doGenerate () {
       console.log('doClone: ')
 
       if (!sourcePath || !sourcePath) window.alert('需要指定源&目标路径')
 
-      Object.keys(biz).forEach(name => { biz[name] = getInput(name) })
-
-      await clonePath(sourcePath, targetPath, biz)
+      // 遍历生成页面
+      for (const item of this.bizs) {
+        await clonePath(sourcePath, targetPath, item)
+      }
     // const result = await clonePath(sourcePath, targetPath)
     // console.log(result)
     }
-  },
+  }
 
 }
 Vue.createApp(App).mount('#app')
