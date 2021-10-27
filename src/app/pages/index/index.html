@@ -5,7 +5,7 @@
     <title>首页</title>
     <meta
       http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'unsafe-inline';"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"
     />
     <link rel="stylesheet" href="../../../static/styles/index.css" />
     <style>
@@ -49,7 +49,7 @@
     </header>
 
     <!-- Actural Page Content -->
-    <main>
+    <main id="app">
       <div class="container">
         <!-- 表单 -->
         <form class="form">
@@ -63,7 +63,7 @@
                 <div class="input-group">
                   <div class="input-group-text">
                     <button
-                      id="pick-source"
+                      @click.stop="pickSource"
                       type="button"
                       class="btn btn-default"
                     >
@@ -77,6 +77,7 @@
                   </div>
 
                   <input
+                    v-model="sourcePath"
                     class="form-control"
                     name="source-path"
                     readonly
@@ -86,7 +87,7 @@
 
                 <div class="form-text d-flex align-items-start gap-2">
                   <span><i class="fal fa-info-square"></i></span>
-                  <p>例如 <span id="sample-source-path"></span></p>
+                  <p>例如 <span id="sample-source-path">{{ sourcePathSample }}</span></p>
                 </div>
               </div>
 
@@ -100,7 +101,7 @@
                 <div class="input-group">
                   <div class="input-group-text">
                     <button
-                      id="pick-target"
+                      @click.stop="pickTarget"
                       type="button"
                       class="btn btn-default"
                     >
@@ -114,6 +115,7 @@
                   </div>
 
                   <input
+                    v-model="targetPath"
                     class="form-control"
                     name="target-path"
                     readonly
@@ -123,7 +125,7 @@
 
                 <div class="form-text d-flex align-items-start gap-2">
                   <span><i class="fal fa-info-square"></i></span>
-                  <p>例如 <span id="target-source-path"></span></p>
+                  <p>例如 <span id="target-source-path">{{ targetPathSample }}</span></p>
               </div>
             </div>
           </fieldset>
@@ -161,7 +163,7 @@
             </div>
           </fieldset>
 
-          <fieldset class="d-none">
+          <fieldset disabled>
             <legend>
               数据库
               <div class="d-inline-flex">
@@ -191,9 +193,9 @@
 
               <div>
                 <input
+                  v-model="db.url"
                   name="url"
                   class="form-control"
-                  value="mysql://root:123456@localhost:3306/xyz"
                   required
                 />
 
@@ -210,6 +212,7 @@
 
                 <div>
                   <input
+                    v-model="db.db"
                     name="db"
                     class="form-control"
                     placeholder="数据库名称"
@@ -223,6 +226,7 @@
 
                 <div>
                   <input
+                    v-model="db.table"
                     name="table"
                     class="form-control"
                     placeholder="数据表名称"
@@ -236,6 +240,7 @@
 
                 <div>
                   <input
+                  v-model="db.pk"
                     name="pk"
                     class="form-control"
                     placeholder="数据表的主键字段名称"
@@ -258,7 +263,7 @@
             </button>
 
             <button
-              id="do-pack"
+              @click.stop="doPack"
               title="打包"
               type="button"
               class="btn btn-secondary"
@@ -267,7 +272,7 @@
             </button>
 
             <button
-              id="do-clone"
+              @click.stop="doClone"
               title="克隆/创建镜像副本"
               type="button"
               class="btn btn-secondary"
@@ -276,7 +281,7 @@
             </button>
 
             <button
-              id="do-generate"
+              @click.stop="doGenerate"
               title="生成/创建定制化副本"
               type="button"
               class="btn btn-primary"
