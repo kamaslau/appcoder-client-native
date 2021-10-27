@@ -116,16 +116,18 @@ const App = {
       bizItem: {
         code: '',
         name: '',
-        nameLocale: ''
+        nameLocale: '',
+        parseTable: false,
+        table: '',
+        pk: ''
       },
       bizs: [],
 
       // 数据库
+      canParseTable: false, // 是否允许解析数据表结构
       db: {
         url: 'mysql://root:123456@localhost:3306/xyz',
-        db: '',
-        table: '',
-        pk: ''
+        db: ''
       }
     }
   },
@@ -154,9 +156,42 @@ const App = {
       this.bizs.push({ ...this.bizItem })
     },
 
+    // 转换业务编码为大写
+    upperBizCode (index) {
+      console.log('upperBizCode: ', this.bizs[index])
+      this.bizs[index].code = this.bizs[index].code.toUpperCase()
+    },
+
+    // 填写默认值
+    mapBizDefaults (index) {
+      console.log('mapBizDefaults: ', this.bizs[index])
+
+      this.bizs[index].table = this.bizs[index].name
+      this.bizs[index].pk = this.bizs[index].name + '_id'
+    },
+
     // 添加一组业务配置
     removeBiz (index) {
       this.bizs.splice(index, 1)
+    },
+
+    // 验证路径格式
+    verifyPaths (sourcePath, targetPath, allowSelf = true) {
+      let errorMessage = ''
+
+      if (!sourcePath) errorMessage += '需指定源路径；'
+      if (!targetPath) errorMessage += '需指定目标路径；'
+      if (sourcePath === targetPath) {
+        const message = '源路径与目标路径相同'
+
+        if (allowSelf) {
+          console.warn(message)
+        } else {
+          errorMessage += message
+        }
+      }
+
+      return errorMessage
     },
 
     /**
@@ -167,7 +202,8 @@ const App = {
     async doPack () {
       console.log('doPack: ')
 
-      if (!sourcePath || !sourcePath) window.alert('需要指定源&目标路径')
+      const errorMessage = this.verifyPaths(sourcePath, targetPath)
+      if (errorMessage.length > 0) return window.alert(errorMessage)
 
       await packPath(sourcePath, targetPath)
     },
@@ -180,7 +216,8 @@ const App = {
     async doClone () {
       console.log('doClone: ')
 
-      if (!sourcePath || !sourcePath) window.alert('需要指定源&目标路径')
+      const errorMessage = this.verifyPaths(sourcePath, targetPath, false)
+      if (errorMessage.length > 0) return window.alert(errorMessage)
 
       await clonePath(sourcePath, targetPath)
     },
@@ -193,14 +230,13 @@ const App = {
     async doGenerate () {
       console.log('doClone: ')
 
-      if (!sourcePath || !sourcePath) window.alert('需要指定源&目标路径')
+      const errorMessage = this.verifyPaths(sourcePath, targetPath)
+      if (errorMessage.length > 0) return window.alert(errorMessage)
 
       // 遍历生成页面
       for (const item of this.bizs) {
         await clonePath(sourcePath, targetPath, item)
       }
-    // const result = await clonePath(sourcePath, targetPath)
-    // console.log(result)
     }
   }
 

@@ -164,12 +164,17 @@ const packPath = async (sourcePath, targetPath) => {
 
   // 写入新文件到目标路径
   const targetFilePath = `${targetPath}/${path.basename(sourcePath)}_clone_packed.zip`
-  fs.ensureFile(targetFilePath).then(() => {
-    fs.writeFile(targetFilePath, zipFileContent)
-  }).then(() => {
-    console.log('zip file path is targetFilePath: ', targetFilePath)
-    shell.openPath(targetPath) // 在文件管理器中打开目标路径
-  })
+
+  try {
+    fs.ensureFile(targetFilePath).then(() => {
+      fs.writeFile(targetFilePath, zipFileContent)
+    }).then(() => {
+      console.log('zip file path is targetFilePath: ', targetFilePath)
+      shell.openPath(targetPath) // 在文件管理器中打开目标路径
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 /**
@@ -195,7 +200,12 @@ const clonePath = async (
       console.log('create mirror')
 
       targetFilePath = path.join(targetPath, relativePath)
-      fs.copy(filePath, targetFilePath)
+
+      try {
+        fs.copy(filePath, targetFilePath)
+      } catch (error) {
+        console.error(error)
+      }
     } else {
       // 创建新文件
       console.log('create product')
@@ -219,10 +229,15 @@ const clonePath = async (
         })
       }
 
-      console.log('pageContent: ', pageContent)
-      fs.ensureFile(targetFilePath).then(() => {
-        fs.writeFile(targetFilePath, pageContent)
-      })
+      // console.log('pageContent: ', pageContent)
+
+      try {
+        fs.ensureFile(targetFilePath).then(() => {
+          fs.writeFile(targetFilePath, pageContent)
+        })
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 
