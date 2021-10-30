@@ -99,6 +99,8 @@ dd {
  */
 #page-main-index {
   header {
+    #app-version {margin-left:.5rem;}
+ 
     nav {
       margin-left: auto;
     }
@@ -107,10 +109,10 @@ dd {
   main {
     .biz-item {
       display: flex;
-      margin: 20px 0 20px 20px;
+      margin: 20px 0;
 
       .biz-item-ops {
-        padding: 0 10px;
+        margin-right: 10px;
       }
 
       .biz-item-content {

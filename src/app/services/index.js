@@ -34,7 +34,7 @@ const appPathDict = {
   page: path.join(__dirname, '../../page'), // 页面；重构时可以此作为前端框架的组件目录
   static: path.join(__dirname, '../../../static') // 静态资源（图片、样式、字体、模板文件等）
 }
-console.log('appPathDict: ', appPathDict)
+// console.log('appPathDict: ', appPathDict)
 
 // 应用主配置文件
 const appFile = path.join(appPathDict.data, 'config.json') // 生成配置文件
@@ -71,7 +71,8 @@ const replaceMatchedString = (context, searchValue, replaceValue) => {
 
 /**
  * 读取目标文件夹下文件列表
- * @param targetDir 目标本地文件夹路径
+ *
+ * @param {string} targetDir 目标本地文件夹路径
  * @returns 所有文件的本地路径[]
  */
 const listFilesInDir = async (targetDir = null) => {
@@ -87,12 +88,12 @@ const listFilesInDir = async (targetDir = null) => {
       list => list.filter(item => !/(^|\/)\.[^/.]/g.test(item))
     ).then(
       // cancat path root to sole file names
-      list => list.map(item => `${targetDir}/${item}`)
+      list => list.map(item => path.join(targetDir,item))
     )
   } catch (error) {
     console.error('listFilesInDir error: ', error)
   }
-  console.log('result: ', result)
+  // console.log('result: ', result)
 
   return result
 }

@@ -2,7 +2,7 @@
 <html lang="zh-cn">
   <head>
     <meta charset="utf-8" />
-    <title>首页</title>
+    <title>应用首页</title>
     <meta
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"
@@ -22,7 +22,7 @@
 
     <header class="mb-4 bg-dark text-white">
       <div
-        class="container d-flex justify-content-between align-items-center py-3"
+        class="container d-flex justify-content-between align-items-center py-2"
       >
         <h1 id="app-name">AppCoder</h1>
         <sup title="版本号" id="app-version" class="badge bg-light text-dark"></sup>
@@ -63,7 +63,7 @@
                 <div class="input-group">
                   <div class="input-group-text">
                     <button
-                      @click.stop="pickSource"
+                      @click="pickSource"
                       type="button"
                       class="btn btn-default"
                     >
@@ -79,7 +79,6 @@
                   <input
                     v-model="sourcePath"
                     class="form-control"
-                    name="source-path"
                     readonly
                     required
                   />
@@ -101,7 +100,7 @@
                 <div class="input-group">
                   <div class="input-group-text">
                     <button
-                      @click.stop="pickTarget"
+                      @click="pickTarget"
                       type="button"
                       class="btn btn-default"
                     >
@@ -117,7 +116,6 @@
                   <input
                     v-model="targetPath"
                     class="form-control"
-                    name="target-path"
                     readonly
                     required
                   />
@@ -133,19 +131,21 @@
           <fieldset>
             <legend>业务</legend>
 
-            <button @click.prevent="addBiz" title="添加业务" type="button" class="btn btn-light">添加</button>
+            <button title="添加业务项" @click="addBiz" type="button" class="btn btn-outline-primary">
+              <i class="fal fa-plus"></i>
+            </button>
 
             <!-- 业务配置项 -->
-            <div v-for="(item, index) in bizs" :index="index" class="biz-item bg-light">
+            <div v-for="(item, index) in bizs" :index="index" class="biz-item">
               <!-- 业务配置项操作 -->
               <div class="biz-item-ops">
-                <button @click.prevent="removeBiz(index)" type="button" class="btn text-danger">
-                  <i title="移除当前项" class="fal fa-times"></i>
+                <button title="移除当前项" @click="removeBiz(index)" type="button" class="btn btn-outline-warning">
+                  <i class="fal fa-minus"></i>
                 </button>
               </div>
 
               <!-- 业务配置项内容 -->
-              <div class="biz-item-content">
+              <div class="biz-item-content bg-light">
                 <div class="row">
                   <div class="col mt-0 form-group">
                     <label class="form-label">编码</label>
@@ -218,6 +218,29 @@
             </div>
           </fieldset>
 
+          <!-- 数据结构API -->
+          <fieldset>
+            <legend>
+              数据结构API
+              <div class="d-inline-flex">
+                <span class="badge text-info"><i class="fal fa-info-square"></i> 高级功能</span>
+              </div>
+            </legend>
+
+            <div class="form-group">
+              <label class="form-label">路径</label>
+
+              <div>
+                <input
+                  v-model="api.url"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- 数据库 -->
           <fieldset v-if="canParseTable">
             <legend>
               数据库
@@ -233,7 +256,6 @@
               <div>
                 <input
                   v-model="db.url"
-                  name="url"
                   class="form-control"
                   required
                 />
@@ -252,7 +274,6 @@
                 <div>
                   <input
                     v-model="db.db"
-                    name="db"
                     class="form-control"
                     placeholder="数据库名称"
                     required
@@ -274,7 +295,7 @@
             </button>
 
             <button
-              @click.stop="doPack"
+              @click="doPack"
               title="打包"
               type="button"
               class="btn btn-secondary"
@@ -283,7 +304,7 @@
             </button>
 
             <button
-              @click.stop="doClone"
+              @click="doClone"
               title="克隆/创建镜像副本"
               type="button"
               class="btn btn-secondary"
@@ -292,7 +313,7 @@
             </button>
 
             <button
-              @click.stop="doGenerate"
+              @click="doGenerate"
               :disabled="bizs.length === 0 || bizs[0].name.length === 0"
               title="生成/创建定制化副本"
               type="button"

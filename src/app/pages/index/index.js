@@ -1,34 +1,9 @@
+const { default: axios } = require('axios')
 const Vue = require('vue')
 /**
  * 首页
  * ===
  */
-
-/**
- * 数据
- */
-// 路径
-let sourcePath = isDev ? appPathDict[process.env.SOURCE_DIR] : ''
-let targetPath = isDev ? appPathDict[process.env.TARGET_DIR] : ''
-
-// 选择源路径
-const pickSource = async () => {
-  console.log('pickSource: ')
-
-  sourcePath = await pickPath()
-
-  if (sourcePath !== null) setInput('source-path', sourcePath) // 更新字段值
-}
-
-// 选择目标路径
-const pickTarget = async () => {
-  console.log('pickTarget: ')
-
-  targetPath = await pickPath()
-
-  if (targetPath !== null) document.querySelector("input[name='target-path']").value = targetPath // 更新字段值
-}
-
 /**
  * 选择路径
  */
@@ -56,37 +31,14 @@ const pickPath = async () => {
     })
 
   console.log('path: ', path)
+
   return path
 }
 
-// 更新字段值
-const setInput = (name, value = '') => {
-  document.querySelector(`input[name='${name}']`).value = value
-}
-
-// 获取字段值
-const getInput = (name) => document.querySelector(`input[name='${name}']`).value
-
-// 渲染页面内容
+// 渲染页面基本内容
 const renderContent = () => {
-  document.getElementById('app-name').innerText = document.getElementById('app-name').title = process.env.NAME
+  document.title = document.getElementById('app-name').innerText = document.getElementById('app-name').title = process.env.NAME
   document.getElementById('app-version').innerText = process.env.VERSION
-
-  const dataMap = { 'source-path': sourcePath, 'target-path': targetPath }
-  for (const name of Object.keys(dataMap)) setInput(name, dataMap[name])
-}
-
-// 绑定事件监听器
-const bindEventListeners = () => {
-  // document.getElementById('sample-source-path').innerText = appPathDict.documents
-  // document.getElementById('target-source-path').innerText = appPathDict.desktop
-
-  // document.getElementById('pick-source').addEventListener('click', async (event) => await pickSource())
-  // document.getElementById('pick-target').addEventListener('click', async (event) => await pickTarget())
-
-  // document.getElementById('do-pack').addEventListener('click', async (event) => await doPack())
-  // document.getElementById('do-clone').addEventListener('click', async (event) => await doClone())
-  // document.getElementById('do-generate').addEventListener('click', async (event) => await doGenerate())
 }
 
 window.onload = () => {
@@ -96,8 +48,6 @@ window.onload = () => {
   if (ipcRenderer) ipcRenderer.send('pageOnload', { page: 'index' })
 
   renderContent()
-
-  // bindEventListeners()
 }
 
 /**
@@ -107,9 +57,9 @@ const App = {
   data () {
     return {
       // 路径
-      sourcePath: isDev ? appPathDict[process.env.SOURCE_DIR] : '',
+      sourcePath: isDev ? appPathDict[process.env.SOURCE_DIR] : window.localStorage.getItem('recentSourcePath'),
       sourcePathSample: appPathDict[process.env.SOURCE_DIR],
-      targetPath: isDev ? appPathDict[process.env.TARGET_DIR] : '',
+      targetPath: isDev ? appPathDict[process.env.TARGET_DIR] : window.localStorage.getItem('recentTargetPath'),
       targetPathSample: appPathDict[process.env.TARGET_DIR],
 
       // 业务
@@ -123,6 +73,11 @@ const App = {
       },
       bizs: [],
 
+      // 数据结构API
+      api: {
+        url: process.env.API_URL ?? ''
+      },
+
       // 数据库
       canParseTable: false, // 是否允许解析数据表结构
       db: {
@@ -132,23 +87,35 @@ const App = {
     }
   },
 
+  created () {
+    // DEV only
+    isDev && this.bizs.push({
+      code: 'USR',
+      name: 'user',
+      nameLocale: '用户',
+      parseTable: true,
+      table: 'user',
+      pk: 'userID'
+    })
+  },
+
   methods: {
     // 选择源路径
-    pickSource: async () => {
+    async pickSource () {
       console.log('pickSource: ')
 
-      sourcePath = await pickPath()
+      this.sourcePath = await pickPath() ?? this.sourcePath
 
-      if (sourcePath !== null) setInput('source-path', sourcePath) // 更新字段值
+      window.localStorage.setItem('recentSourcePath', this.sourcePath)
     },
 
     // 选择目标路径
-    pickTarget: async () => {
+    async pickTarget () {
       console.log('pickTarget: ')
 
-      targetPath = await pickPath()
+      this.targetPath = await pickPath() ?? this.targetPath
 
-      if (targetPath !== null) document.querySelector("input[name='target-path']").value = targetPath // 更新字段值
+      window.localStorage.setItem('recentTargetPath', this.targetPath)
     },
 
     // 添加一组业务配置
@@ -159,6 +126,7 @@ const App = {
     // 转换业务编码为大写
     upperBizCode (index) {
       console.log('upperBizCode: ', this.bizs[index])
+
       this.bizs[index].code = this.bizs[index].code.toUpperCase()
     },
 
@@ -200,12 +168,12 @@ const App = {
      * 直接创建压缩包到目标路径，不处理文件
      */
     async doPack () {
-      console.log('doPack: ')
+      console.log('doPack: ', this.sourcePath, this.targetPath)
 
-      const errorMessage = this.verifyPaths(sourcePath, targetPath)
+      const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath)
       if (errorMessage.length > 0) return window.alert(errorMessage)
 
-      await packPath(sourcePath, targetPath)
+      await packPath(this.sourcePath, this.targetPath)
     },
 
     /**
@@ -214,12 +182,12 @@ const App = {
      * 直接创建文件拷贝到目标路径，不处理文件
      */
     async doClone () {
-      console.log('doClone: ')
+      console.log('doClone: ', this.sourcePath, this.targetPath)
 
-      const errorMessage = this.verifyPaths(sourcePath, targetPath, false)
+      const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath, false)
       if (errorMessage.length > 0) return window.alert(errorMessage)
 
-      await clonePath(sourcePath, targetPath)
+      await clonePath(this.sourcePath, this.targetPath)
     },
 
     /**
@@ -228,15 +196,70 @@ const App = {
      * 使用源文件作为模板来生成新文件
      */
     async doGenerate () {
-      console.log('doClone: ')
+      console.log('doClone: ', this.sourcePath, this.targetPath)
 
-      const errorMessage = this.verifyPaths(sourcePath, targetPath)
+      const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath)
       if (errorMessage.length > 0) return window.alert(errorMessage)
 
-      // 遍历生成页面
+      // 遍历业务配置项，生成相应页面，并装载到以业务名称为名的文件夹中
       for (const item of this.bizs) {
-        await clonePath(sourcePath, targetPath, item)
+        const columnsInfo = await this.parseTable(item.name) ?? []
+        item.columnsContent = this.composeContent(columnsInfo) ?? ''
+
+        await clonePath(this.sourcePath, this.targetPath, item)
       }
+    },
+
+    /**
+     * 解析数据表结构3
+     *
+     * @param {string} tableName 数据表名称
+     */
+    async parseTable (tableName) {
+      console.log('parseTable: ', tableName)
+
+      const apiURL = `${this.api.url}/${tableName}`
+
+      let result = null
+
+      try {
+        result = await axios.get(apiURL).then(response => {
+          if (response.status === 200) return response.data.data
+        })
+      } catch (error) {
+        console.error(error)
+      }
+
+      console.log(result)
+
+      return result
+    },
+
+    // 组装字段信息内容
+    composeContent (items) {
+      // console.log('composeContent: ', items)
+
+      let result = ''
+
+      const readOnlyNames = ['createdAt', 'updatedAt', 'deletedAt'] // 只读字段
+
+      const formTemplate = '<input class="form-control" name="[[name]]" placeholder="[[placeholder]]" [[required]] />' // 表单模板
+
+      for (const item of items) {
+        // 跳过部分只读字段
+        if (readOnlyNames.includes(item.COLUMN_NAME) || item.COLUMN_KEY === 'PRI') {
+          console.log(`${item.COLUMN_NAME} is skipped`)
+          continue
+        }
+
+        result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
+          .replaceAll('[[required]]', (item.IS_NULLABLE === 'YES' ? 'required' : ''))
+          .replaceAll('[[placeholder]]', (item.COLUMN_COMMENT.length > 0 ? item.COLUMN_COMMENT : '')) + '\r\n'
+      }
+
+      console.log(result)
+
+      return result
     }
   }
 
