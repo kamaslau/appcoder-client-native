@@ -184,6 +184,7 @@ const packPath = async (sourcePath, targetPath) => {
 const clonePath = async (
   sourcePath = null,
   targetPath = null,
+  wrapInFolder = true,
   payload = null
 ) => {
   console.log(`clonePath: ${sourcePath} -> ${targetPath}`, payload)
@@ -194,13 +195,15 @@ const clonePath = async (
   const fileOp = async (filePath) => {
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
     const relativePath = filePath.substring(sourcePath.length)
-    let targetFilePath = ''
+    const targetFilePath = path.join(
+      targetPath,
+      (wrapInFolder ? (payload?.name ?? '') : ''),
+      relativePath
+    )
 
     if (payload === null) {
       // 创建镜像
       console.log('create mirror')
-
-      targetFilePath = path.join(targetPath, relativePath)
 
       try {
         fs.copy(filePath, targetFilePath)
@@ -210,8 +213,6 @@ const clonePath = async (
     } else {
       // 创建新文件
       console.log('create product')
-
-      targetFilePath = path.join(targetPath, payload.name, relativePath)
 
       // 读取当前文件内容为模板
       let pageContent = await fs.readFile(filePath, 'utf8')

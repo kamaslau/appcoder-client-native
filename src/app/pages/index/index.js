@@ -79,7 +79,8 @@ const App = {
       },
 
       // 数据库
-      canParseTable: false, // 是否允许解析数据表结构
+      canParseTable: true, // 是否允许解析数据表结构
+      wrapInFolder: true, // 创建业务文件夹
       db: {
         url: 'mysql://root:123456@localhost:3306/xyz',
         db: ''
@@ -187,7 +188,7 @@ const App = {
       const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath, false)
       if (errorMessage.length > 0) return window.alert(errorMessage)
 
-      await clonePath(this.sourcePath, this.targetPath)
+      await clonePath(this.sourcePath, this.targetPath, this.wrapInFolder)
     },
 
     /**
@@ -206,7 +207,7 @@ const App = {
         const columnsInfo = await this.parseTable(item.name) ?? []
         item.columnsContent = this.composeContent(columnsInfo) ?? ''
 
-        await clonePath(this.sourcePath, this.targetPath, item)
+        await clonePath(this.sourcePath, this.targetPath, this.wrapInFolder, item)
       }
     },
 

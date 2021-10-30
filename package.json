@@ -1,7 +1,7 @@
 {
   "name": "appcoder_client_native",
   "productName": "AppCoder",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "低代码自动化应用开发平台",
   "author": "Kamas Lau<kamaslau@dingtalk.com>",
   "license": "UNLICENSED",
