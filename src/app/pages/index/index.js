@@ -80,7 +80,7 @@ const App = {
 
       // 数据库
       canParseTable: true, // 是否允许解析数据表结构
-      wrapInFolder: true, // 创建业务文件夹
+      wrapInFolder: false, // 创建业务文件夹
       db: {
         url: 'mysql://root:123456@localhost:3306/xyz',
         db: ''
@@ -205,14 +205,22 @@ const App = {
       // 遍历业务配置项，生成相应页面，并装载到以业务名称为名的文件夹中
       for (const item of this.bizs) {
         const columnsInfo = await this.parseTable(item.name) ?? []
-        item.columnsContent = this.composeContent(columnsInfo) ?? ''
+
+        // 补充字段名称本地化信息
+        for (const column of columnsInfo) {
+          column.COLUMN_NAME_LOCALE = column.COLUMN_COMMENT.length > 0 ? this.parseNameLocaleFromComment(column.COLUMN_COMMENT) : ''
+        }
+
+        item.contentForm = this.composeFormContent(columnsInfo) ?? ''
+        item.contentList = this.composeListContent(columnsInfo) ?? ''
+        item.contentTable = this.composeTableContent(columnsInfo) ?? ''
 
         await clonePath(this.sourcePath, this.targetPath, this.wrapInFolder, item)
       }
     },
 
     /**
-     * 解析数据表结构3
+     * 解析数据表结构
      *
      * @param {string} tableName 数据表名称
      */
@@ -236,15 +244,20 @@ const App = {
       return result
     },
 
-    // 组装字段信息内容
-    composeContent (items) {
+    // 从字段备注中解析字段名
+    parseNameLocaleFromComment (COLUMN_COMMENT) {
+      return COLUMN_COMMENT.substring(0, COLUMN_COMMENT.indexOf('；'))
+    },
+
+    // 组装表单型内容
+    composeFormContent (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
 
       const readOnlyNames = ['createdAt', 'updatedAt', 'deletedAt'] // 只读字段
 
-      const formTemplate = '<input class="form-control" name="[[name]]" placeholder="[[placeholder]]" [[required]] />' // 表单模板
+      const formTemplate = '<input class="form-control" name="[[name]]" placeholder="[[nameLocale]]" [[required]] />' + '\r\n' // 表单模板
 
       for (const item of items) {
         // 跳过部分只读字段
@@ -255,7 +268,47 @@ const App = {
 
         result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
           .replaceAll('[[required]]', (item.IS_NULLABLE === 'YES' ? 'required' : ''))
-          .replaceAll('[[placeholder]]', (item.COLUMN_COMMENT.length > 0 ? item.COLUMN_COMMENT : '')) + '\r\n'
+          .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+      }
+
+      console.log(result)
+
+      return result
+    },
+
+    // 组装列表型内容
+    composeListContent (items) {
+      // console.log('composeContent: ', items)
+
+      let result = ''
+
+      const formTemplate = '<li title="[[nameLocale]]([[name]])">[[nameLocale]]: {{ [[name]] }}</li>' + '\r\n' // 列表模板
+
+      for (const item of items) {
+        result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
+          .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+      }
+
+      console.log(result)
+
+      return result
+    },
+
+    // 组装表格型内容
+    composeTableContent (items) {
+      // console.log('composeContent: ', items)
+
+      let result = ''
+
+      const formTemplate =
+      '<tr title="[[nameLocale]]([[name]])">' + '\r\n' +
+      '  <td>[[nameLocale]]</td>' + '\r\n' +
+      '  <td>{{ [[name]] }}</td>' + '\r\n' +
+      '</tr>' + '\r\n' // 表格模板
+
+      for (const item of items) {
+        result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
+          .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
       }
 
       console.log(result)
@@ -263,6 +316,5 @@ const App = {
       return result
     }
   }
-
 }
 Vue.createApp(App).mount('#app')
