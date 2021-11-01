@@ -1,4 +1,3 @@
-const { default: axios } = require('axios')
 const Vue = require('vue')
 /**
  * 首页
@@ -232,8 +231,14 @@ const App = {
       let result = null
 
       try {
-        result = await axios.get(apiURL).then(response => {
-          if (response.status === 200) return response.data.data
+        result = await fetch(apiURL).then(response => {
+          console.log(response)
+
+          if (response.status === 200) {
+            return response.json().data
+          } else {
+            window.alert(response.json().message)
+          }
         })
       } catch (error) {
         console.error(error)

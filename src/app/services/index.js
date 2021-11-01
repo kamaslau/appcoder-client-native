@@ -3,6 +3,7 @@
  */
 const fs = require('fs-extra')
 const JSZip = require('jszip') // https://stuk.github.io/jszip/documentation/examples.htmls
+const fetch = require('node-fetch')
 const os = require('os')
 const path = require('path')
 const { shell, ipcRenderer } = require('electron')
