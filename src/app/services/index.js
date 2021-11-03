@@ -1,22 +1,16 @@
 /**
  * IoC
  */
+const { clipboard, shell, ipcRenderer } = require('electron')
+const fetch = require('node-fetch')
 const fs = require('fs-extra')
 const JSZip = require('jszip') // https://stuk.github.io/jszip/documentation/examples.htmls
-const fetch = require('node-fetch')
 const os = require('os')
 const path = require('path')
-const { shell, ipcRenderer } = require('electron')
 const remote = require('@electron/remote')
 
 const isDev = process.env.NODE_ENV === 'development'
 console.log('isDev: ', isDev)
-
-// 软件包信息，即主进程中解析出package.json数据
-// if (isDev) {
-//   const packageInfo = remote.getGlobal('packageInfo')
-//   console.log('packageInfo: ', packageInfo)
-// }
 
 /**
  * 应用路径词典
@@ -89,7 +83,7 @@ const listFilesInDir = async (targetDir = null) => {
       list => list.filter(item => !/(^|\/)\.[^/.]/g.test(item))
     ).then(
       // cancat path root to sole file names
-      list => list.map(item => path.join(targetDir,item))
+      list => list.map(item => path.join(targetDir, item))
     )
   } catch (error) {
     console.error('listFilesInDir error: ', error)
@@ -248,6 +242,16 @@ const clonePath = async (
   await processPath(sourcePath, fileOp)
 
   shell.openPath(targetPath) // 在文件管理器中打开目标路径
+}
+
+/** 拷贝文字内容 */
+const copyText = (content) => {
+  try {
+    clipboard.writeText(content)
+    console.log('text copied: ', clipboard.readText())
+  } catch (error) {
+    console.error('copyText error: ', error)
+  }
 }
 
 // 检查配置文件是否存在，若否则迭代创建文件（含路径），一般为初次启动使用

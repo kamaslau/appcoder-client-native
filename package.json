@@ -1,7 +1,7 @@
 {
   "name": "appcoder_client_native",
   "productName": "AppCoder",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "低代码自动化应用开发平台",
   "author": "Kamas Lau<kamaslau@dingtalk.com>",
   "license": "UNLICENSED",
@@ -12,7 +12,7 @@
   "main": "src/app.js",
   "scripts": {
     "dev": "cross-env nodemon",
-    "format": "cross-env standard --fix 'src/app/pages/**/*.*'",
+    "format": "cross-env standard --fix 'src/**/*.*'",
     "make": "electron-forge make",
     "make-mac": "electron-forge make --platform darwin",
     "make-win": "electron-forge make --platform win32",

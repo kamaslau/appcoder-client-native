@@ -36,7 +36,7 @@ const pickPath = async () => {
 
 // 渲染页面基本内容
 const renderContent = () => {
-  document.title = document.getElementById('app-name').innerText = document.getElementById('app-name').title = process.env.NAME
+  document.title = document.getElementById('app-name').innerText = document.getElementById('app-name').title = process.env.APP_NAME
   document.getElementById('app-version').innerText = process.env.VERSION
 }
 
@@ -83,6 +83,24 @@ const App = {
       db: {
         url: 'mysql://root:123456@localhost:3306/xyz',
         db: ''
+      },
+
+      // 模板标签
+      templateTags: {
+        module: [
+          { literal: '[[code]]', label: '业务编码' },
+          { literal: '[[name]]', label: '业务名称' },
+          { literal: '[[nameLocale]]', label: '业务本地化名称' },
+          { literal: '[[table]]', label: '业务表名' },
+          { literal: '[[pk]]', label: '业务表的主键名' }
+        ],
+        names: [
+          { literal: '[[name]]', label: '字段名称' },
+          { literal: '[[nameLocale]]', label: '字段本地化名称' },
+          { literal: '[[namesForm]]', label: '表单型字段内容体' },
+          { literal: '[[namesList]]', label: '列表型字段内容体' },
+          { literal: '[[namesTable]]', label: '表格型字段内容体' }
+        ]
       }
     }
   },
@@ -319,6 +337,11 @@ const App = {
       console.log(result)
 
       return result
+    },
+
+    // 拷贝文本内容
+    doCopy (content) {
+      copyText(content)
     }
   }
 }

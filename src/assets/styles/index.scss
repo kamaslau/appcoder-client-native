@@ -99,8 +99,10 @@ dd {
  */
 #page-main-index {
   header {
-    #app-version {margin-left:.5rem;}
- 
+    #app-version {
+      margin-left: 0.5rem;
+    }
+
     nav {
       margin-left: auto;
     }
@@ -119,6 +121,19 @@ dd {
         flex-grow: 1;
         min-width: 240px;
         padding: 10px;
+      }
+    }
+
+    #template-tag-intro {
+      background-color: $color-light;
+      margin-top: 1.875rem;
+      padding: 1.25rem;
+
+      .template-tag-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
       }
     }
   }

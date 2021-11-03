@@ -1,11 +1,32 @@
 // https://github.com/electron/windows-installer#handling-squirrel-events
 if (require('electron-squirrel-startup')) return
 
-// 载入，并应用env.js环境配置文件
-const _ENV = require('./env.json')
-// console.log('_ENV: ', _ENV)
-Object.assign(process.env, process.env, _ENV, { NODE_ENV: process.env.NODE_ENV ?? 'production' })
-// console.log('process.env: ', process.env)
+/**
+ * 环境配置
+ * 
+ * 载入，并应用env.json、package.json的相关配置项；由于env.json最后加载，所以可在其中对前序内容（若有重复项）进行覆盖。
+ */
+const mapEnv = (target = process.env) => {
+  const _PACKAGE = require('../package.json')
+  const _ENV = require('./env.json')
+  // console.log('_PACKAGE: ', _PACKAGE)
+  // console.log('_ENV: ', _ENV)
+
+  Object.assign(
+    target,
+    process.env,
+    {
+      NODE_ENV: process.env.NODE_ENV ?? 'production',
+      APP_NAME: _PACKAGE.productName,
+      VERSION: _PACKAGE.version,
+      DESCRIPTION: _PACKAGE.description,
+    },
+    _ENV,
+  )
+
+  // console.log('process.env: ', process.env)
+}
+mapEnv()
 
 const isDev = process.env.NODE_ENV === 'development'
 const {
@@ -19,12 +40,6 @@ const remoteMain = require('@electron/remote/main')
 const fs = require('fs-extra')
 const path = require('path')
 const windowStateKeeper = require('electron-window-state') // 记录并恢复窗口状态，如位置、尺寸等
-
-// console.table(process.versions);
-if (isDev) {
-  const packageInfo = require('../package.json')
-  global.packageInfo = packageInfo
-}
 
 const appPath = path.join(__dirname)
 const pageRoot = path.join(appPath, 'app/pages/')

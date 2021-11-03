@@ -342,27 +342,39 @@
         </form>
 
         <!-- 模板文件可用内容标签说明 -->
-        <div>
-          <h2>模板文件内容标签</h2>
-          <h3>业务级别</h3>
-          
-          <ul>
-            <li>[[code]] 业务编码</li>
-            <li>[[name]] 业务名称</li>
-            <li>[[nameLocale]] 业务本地化名称</li>
-            <li>[[table]] 业务表名</li>
-            <li>[[pk]] 业务表的主键名</li>
-          </ul>
+        <div id="template-tag-intro">
+          <h2>模板标签</h2>
+          <div class="alert alert-info">
+            <p>模板标签是以”[[“和”]]“包裹的字符串，例如”[[name]]“。</p>
+            <p>在模板文件中，你可以使用以下模板标签，来标记需要进行生成的内容。</p>
+          </div>
 
-          <h3>字段级别</h3>
-          <ul>
-            <li>[[name]] 字段名称</li>
-            <li>[[nameLocale]] 字段本地化名称</li>
+          <div class="row">
+            <div class="col">
+              <h3>业务级别</h3>
+              <ul class="list-unstyled">
+                <li v-for="(item,index) in templateTags.module" class="template-tag-item">
+                  <div><code>{{item.literal}}</code> {{item.label}}</div>
+                  
+                  <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
+                    <i class="fal fa-copy"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
 
-            <li>[[namesForm]] 表单型字段内容体</li>
-            <li>[[namesList]] 列表型字段内容体</li>
-            <li>[[namesTable]] 表格型字段内容体</li>
-          </ul>
+            <div class="col">
+              <h3>字段级别</h3>
+              <ul class="list-unstyled">
+                <li v-for="(item,index) in templateTags.names" class="template-tag-item">
+                  <div><code>{{item.literal}}</code> {{item.label}}</div>
+                  <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
+                    <i class="fal fa-copy"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </main>
