@@ -157,38 +157,9 @@
     
                     <label class="form-check-label" for="wrapInFolder">
                       创建业务文件夹
+                      <code v-if="item.wrapInFolder">{{ targetPath || '目标路径' }}/{{ item.name || '业务名称' }}</code>
                       </label
                     >
-                  </div>
-                </div>
-                
-                <div class="row">
-                  <div class="col mt-0 form-group">
-                    <label class="form-label">编码<small>[[code]]</small></label>
-      
-                    <input v-model="item.code" class="form-control" placeholder="例如：USR" @change="upperBizCode(index)"/>
-                  </div>
-
-                  <div class="col mt-0 form-group">
-                    <label class="form-label">名称<small>[[name]]</small> *</label>
-
-                    <input v-model="item.name" class="form-control" placeholder="例如：user" @input="mapBizDefaults(index)" required />
-                  </div>
-    
-                  <div class="col mt-0 form-group">
-                    <label class="form-label">本地化名称<small>[[nameLocale]]</small> *</label>
-      
-                    <input
-                      v-model="item.nameLocale"
-                      class="form-control"
-                      placeholder="例如：用户"
-                      required
-                    />
-
-                    <div class="form-text d-flex align-items-start gap-2">
-                      <span><i class="fal fa-info-square"></i></span>
-                      <p>类名称的本地化语言</p>
-                    </div>
                   </div>
                 </div>
 
@@ -207,10 +178,40 @@
                   </div>
                 </div>
 
+                <div class="row">
+                  <div class="col mt-0 form-group">
+                    <label class="form-label">编码</label>
+      
+                    <input v-model="item.code" class="form-control" placeholder="例如：USR" @change="upperBizCode(index)"/>
+                  </div>
+
+                  <div class="col mt-0 form-group">
+                    <label class="form-label">名称 *</label>
+
+                    <input v-model="item.name" class="form-control" placeholder="例如：user" @input="mapBizDefaults(index)" required />
+                  </div>
+    
+                  <div class="col mt-0 form-group">
+                    <label class="form-label">本地化名称 *</label>
+      
+                    <input
+                      v-model="item.nameLocale"
+                      class="form-control"
+                      placeholder="例如：用户"
+                      required
+                    />
+
+                    <div class="form-text d-flex align-items-start gap-2">
+                      <span><i class="fal fa-info-square"></i></span>
+                      <p>类名称的本地化语言</p>
+                    </div>
+                  </div>
+                </div>
+
                 <template v-if="item.parseTable">
                   <div class="row">
                     <div class="col mt-0 form-group">
-                      <label class="form-label">表名<small>[[table]]</small></label>
+                      <label class="form-label">表名</label>
 
                       <input
                         v-model="item.table"
@@ -221,7 +222,7 @@
                     </div>
 
                     <div class="col mt-0 form-group">
-                      <label class="form-label">主键名<small>[[pk]]</small></label>
+                      <label class="form-label">主键名</label>
 
                       <input
                         v-model="item.pk"
@@ -346,7 +347,7 @@
         </form>
 
         <!-- 模板文件可用内容标签说明 -->
-        <div id="template-tag-intro">
+        <div id="template-tag-intro" ref="templateTagIntro">
           <h2>模板标签</h2>
           <div class="alert alert-info">
             <p>模板标签是以”[[“和”]]“包裹的字符串，例如 <code>[[name]]</code>。</p>

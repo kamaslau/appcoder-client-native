@@ -241,6 +241,9 @@ const App = {
 
         await clonePath(this.sourcePath, this.targetPath, folederName, item)
       }
+
+      // 上提模板标签说明DOM到视野之内
+      this.$refs.templateTagIntro.scrollIntoView({ behavior: 'smooth' })
     },
 
     /**
