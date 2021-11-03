@@ -68,7 +68,8 @@ const App = {
         nameLocale: '',
         parseTable: false,
         table: '',
-        pk: ''
+        pk: '',
+        wrapInFolder: true
       },
       bizs: [],
 
@@ -79,7 +80,6 @@ const App = {
 
       // 数据库
       canParseTable: true, // 是否允许解析数据表结构
-      wrapInFolder: false, // 创建业务文件夹
       db: {
         url: 'mysql://root:123456@localhost:3306/xyz',
         db: ''
@@ -108,6 +108,7 @@ const App = {
   created () {
     // DEV only
     isDev && this.bizs.push({
+      ...this.bizItem,
       code: 'USR',
       name: 'user',
       nameLocale: '用户',
@@ -197,7 +198,7 @@ const App = {
     /**
      * 克隆
      *
-     * 直接创建文件拷贝到目标路径，不处理文件
+     * 直接创建文件拷贝到目标路径，不处理文件/创建包装文件夹
      */
     async doClone () {
       console.log('doClone: ', this.sourcePath, this.targetPath)
@@ -205,7 +206,7 @@ const App = {
       const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath, false)
       if (errorMessage.length > 0) return window.alert(errorMessage)
 
-      await clonePath(this.sourcePath, this.targetPath, this.wrapInFolder)
+      await clonePath(this.sourcePath, this.targetPath)
     },
 
     /**
@@ -221,18 +222,24 @@ const App = {
 
       // 遍历业务配置项，生成相应页面，并装载到以业务名称为名的文件夹中
       for (const item of this.bizs) {
-        const columnsInfo = await this.parseTable(item.name) ?? []
+        // （可选）解析数据表以获取字段信息
+        if (item.parseTable) {
+          const columnsInfo = await this.parseTable(item.name) ?? []
 
-        // 补充字段名称本地化信息
-        for (const column of columnsInfo) {
-          column.COLUMN_NAME_LOCALE = column.COLUMN_COMMENT.length > 0 ? this.parseNameLocaleFromComment(column.COLUMN_COMMENT) : ''
+          // 补充字段名称本地化信息
+          for (const column of columnsInfo) {
+            column.COLUMN_NAME_LOCALE = column.COLUMN_COMMENT.length > 0 ? this.parseNameLocaleFromComment(column.COLUMN_COMMENT) : ''
+          }
+
+          // 生成字段内容字符串
+          item.contentForm = this.composeFormContent(columnsInfo) ?? ''
+          item.contentList = this.composeListContent(columnsInfo) ?? ''
+          item.contentTable = this.composeTableContent(columnsInfo) ?? ''
         }
 
-        item.contentForm = this.composeFormContent(columnsInfo) ?? ''
-        item.contentList = this.composeListContent(columnsInfo) ?? ''
-        item.contentTable = this.composeTableContent(columnsInfo) ?? ''
+        const folederName = item.wrapInFolder ? item.name : ''
 
-        await clonePath(this.sourcePath, this.targetPath, this.wrapInFolder, item)
+        await clonePath(this.sourcePath, this.targetPath, folederName, item)
       }
     },
 

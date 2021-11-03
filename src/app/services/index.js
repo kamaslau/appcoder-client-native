@@ -179,7 +179,7 @@ const packPath = async (sourcePath, targetPath) => {
 const clonePath = async (
   sourcePath = null,
   targetPath = null,
-  wrapInFolder = true,
+  folderName = '',
   payload = null
 ) => {
   console.log(`clonePath: ${sourcePath} -> ${targetPath}`, payload)
@@ -192,7 +192,7 @@ const clonePath = async (
     const relativePath = filePath.substring(sourcePath.length)
     const targetFilePath = path.join(
       targetPath,
-      (wrapInFolder ? (payload?.name ?? '') : ''),
+      folderName,
       relativePath
     )
 

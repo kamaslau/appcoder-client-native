@@ -146,6 +146,22 @@
 
               <!-- 业务配置项内容 -->
               <div class="biz-item-content bg-light">
+                <div class="form-group">
+                  <div class="form-check form-switch">
+                    <input
+                      v-model="item.wrapInFolder"
+                      name="wrapInFolder"
+                      type="checkbox"
+                      class="form-check-input text-danger"
+                    />
+    
+                    <label class="form-check-label" for="wrapInFolder">
+                      创建业务文件夹
+                      </label
+                    >
+                  </div>
+                </div>
+                
                 <div class="row">
                   <div class="col mt-0 form-group">
                     <label class="form-label">编码<small>[[code]]</small></label>
@@ -180,11 +196,12 @@
                   <div class="form-check form-switch">
                     <input
                       v-model="item.parseTable"
+                      name="parseTable"
                       type="checkbox"
                       class="form-check-input text-danger"
                     />
   
-                    <label class="form-check-label" for="parseDB">
+                    <label class="form-check-label" for="parseTable">
                       从数据库表解析结构</label
                     >
                   </div>
@@ -283,21 +300,8 @@
             </div>
           </fieldset>
 
-          <!-- 配置 -->
+          <!-- TODO 配置 -->
           <fieldset>
-            <div class="form-group">
-              <div class="form-check form-switch">
-                <input
-                  v-model="wrapInFolder"
-                  type="checkbox"
-                  class="form-check-input text-danger"
-                />
-
-                <label class="form-check-label" for="parseDB">
-                  创建业务文件夹</label
-                >
-              </div>
-            </div>
           </fieldset>
 
           <!-- 表单操作栏 -->
@@ -345,7 +349,7 @@
         <div id="template-tag-intro">
           <h2>模板标签</h2>
           <div class="alert alert-info">
-            <p>模板标签是以”[[“和”]]“包裹的字符串，例如”[[name]]“。</p>
+            <p>模板标签是以”[[“和”]]“包裹的字符串，例如 <code>[[name]]</code>。</p>
             <p>在模板文件中，你可以使用以下模板标签，来标记需要进行生成的内容。</p>
           </div>
 
