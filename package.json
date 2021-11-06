@@ -25,6 +25,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "icon": "./src/assets/images/logo",
         "appBundleId": "com.kamaslau.AppCoder",
         "appCategoryType": "public.app-category.developer-tools",
         "appCopyright": "Kamas Lau<kamaslau@outlook.com>",
