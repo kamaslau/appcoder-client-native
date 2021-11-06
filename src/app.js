@@ -45,7 +45,6 @@ const appPath = path.join(__dirname)
 const pageRoot = path.join(appPath, 'app/pages/')
 
 let launched = false // 是否已创建过窗口
-const appMenu = require(appPath + '/components/menu.js') // 菜单栏构建方法
 let main_window // 主窗口
 
 // 创建窗口
@@ -138,7 +137,8 @@ const createWindow = () => {
 
 app.on('ready', () => {
   // console.log('Electron is almost ready at ', new Date().toLocaleString())
-  appMenu() // 状态栏菜单
+  // const appMenu = require(appPath + '/components/menu.js') // 菜单栏构建方法
+  // appMenu() // 状态栏菜单
 })
 app.whenReady().then(() => {
   // console.log('Electron is really ready at ', new Date().toLocaleString())
