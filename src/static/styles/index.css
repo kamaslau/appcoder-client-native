@@ -86,11 +86,20 @@ dd {
 /**
  * 首页/工作台
  */
+#page-main-index header h1 {
+  cursor: pointer;
+}
 #page-main-index header #app-version {
   margin-left: 0.5rem;
 }
 #page-main-index header nav {
   margin-left: auto;
+}
+#page-main-index main .input-history li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 #page-main-index main .biz-item {
   display: flex;

@@ -42,7 +42,7 @@ const path = require('path')
 const windowStateKeeper = require('electron-window-state') // 记录并恢复窗口状态，如位置、尺寸等
 
 const appPath = path.join(__dirname)
-const pageRoot = path.join(appPath, 'app/pages/')
+const pageRoot = path.join(appPath, 'pages/')
 
 let launched = false // 是否已创建过窗口
 let main_window // 主窗口

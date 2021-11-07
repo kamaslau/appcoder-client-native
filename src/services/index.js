@@ -8,6 +8,7 @@ const JSZip = require('jszip') // https://stuk.github.io/jszip/documentation/exa
 const os = require('os')
 const path = require('path')
 const remote = require('@electron/remote')
+const Historit = require('../../utils/historit')
 
 const isDev = process.env.NODE_ENV === 'development'
 console.log('isDev: ', isDev)
@@ -23,11 +24,11 @@ const appPathDict = {
   desktop: remote.app.getPath('desktop'), // 桌面文件夹路径
   documents: remote.app.getPath('documents'), // 用户文档文件夹路径
   downloads: remote.app.getPath('downloads'), // 下载文件夹路径
-  recent: os.platform() === 'win32' ? remote.app.getPath('recent') : 'N/A', // 【仅Windows】“最近”文件夹路径
+  recent: os.platform() === 'win32' ? remote.app.getPath('recent') : null, // 【仅Windows】“最近”文件夹路径
   root: path.join(__dirname, '../../'), // 根路径；即app.js所在路径
   libs: path.join(__dirname, '../../libs'), // 第三方库
   page: path.join(__dirname, '../../page'), // 页面；重构时可以此作为前端框架的组件目录
-  static: path.join(__dirname, '../../../static') // 静态资源（图片、样式、字体、模板文件等）
+  static: path.join(__dirname, '../../static') // 静态资源（图片、样式、字体、模板文件等）
 }
 // console.log('appPathDict: ', appPathDict)
 
@@ -256,5 +257,11 @@ const copyText = (content) => {
 
 // 检查配置文件是否存在，若否则迭代创建文件（含路径），一般为初次启动使用
 touchFile(appFile)
+
+// 初始化历史记录类
+const historyKeys = ['path', 'url']
+const historyFileName = 'history.json'
+const historyFilePath = path.join(appPathDict.data, historyFileName)
+const historit = new Historit(historyFilePath, historyKeys)
 
 /* services/index.js */

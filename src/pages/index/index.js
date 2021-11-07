@@ -3,50 +3,11 @@ const Vue = require('vue')
  * 首页
  * ===
  */
-/**
- * 选择路径
- */
-const pickPath = async () => {
-  console.log('pickPath: ')
-
-  let path = null
-
-  await remote.dialog
-    .showOpenDialog({
-      title: '请指定源文件夹',
-      buttonLabel: '选择文件夹',
-      properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
-      message: '请指定源文件所在的目录；该目录下的所有文件将被克隆' // [macOS]显示在输入框上方
-    })
-    .then((result) => {
-      if (!result.canceled) {
-        path = result.filePaths[0]
-      } else {
-        console.warn('用户取消选择')
-      }
-    })
-    .catch((error) => {
-      console.error('pickPath: ', error)
-    })
-
-  console.log('path: ', path)
-
-  return path
-}
-
-// 渲染页面基本内容
-const renderContent = () => {
-  document.title = document.getElementById('app-name').innerText = document.getElementById('app-name').title = process.env.APP_NAME
-  document.getElementById('app-version').innerText = process.env.VERSION
-}
-
 window.onload = () => {
   console.log('page/index/index window.onload at ', new Date().toLocaleString())
 
   // 通知主进程已完成HTML、CSS加载
   if (ipcRenderer) ipcRenderer.send('pageOnload', { page: 'index' })
-
-  renderContent()
 }
 
 /**
@@ -55,6 +16,9 @@ window.onload = () => {
 const App = {
   data () {
     return {
+      // 输入记录
+      inputLog: null,
+
       // 路径
       sourcePath: isDev ? appPathDict[process.env.SOURCE_DIR] : window.localStorage.getItem('recentSourcePath'),
       sourcePathSample: appPathDict[process.env.SOURCE_DIR],
@@ -106,6 +70,8 @@ const App = {
   },
 
   created () {
+    this.inputLog = historit.findMany()
+
     // DEV only
     isDev && this.bizs.push({
       ...this.bizItem,
@@ -119,11 +85,61 @@ const App = {
   },
 
   methods: {
+    // 打开程序数据目录
+    openAppDataFolder () {
+      console.log('openAppDataFolder: ', appPathDict.data)
+
+      try {
+        shell.openPath(appPathDict.data)
+      } catch (error) {
+        console.error('openAppDirectory error: ', error)
+      }
+    },
+
+    /**
+ * 选择路径
+ */
+    async pickPath () {
+      console.log('pickPath: ')
+
+      let path = null
+
+      await remote.dialog
+        .showOpenDialog({
+          title: '请指定源文件夹',
+          buttonLabel: '选择文件夹',
+          properties: ['openDirectory', 'createDirectory', 'promptToCreate'],
+          message: '请指定源文件所在的目录；该目录下的所有文件将被克隆' // [macOS]显示在输入框上方
+        })
+        .then((result) => {
+          if (!result.canceled) {
+            path = result.filePaths[0]
+
+            this.inputLog = historit.create('path', path)
+          } else {
+            console.warn('用户取消选择')
+          }
+        })
+        .catch((error) => {
+          console.error('pickPath: ', error)
+        })
+
+      console.log('path: ', path)
+
+      return path
+    },
+
+    changeInput (dataName, value) {
+      console.log('changeInput: ', dataName, value)
+
+      this[dataName] = value
+    },
+
     // 选择源路径
     async pickSource () {
       console.log('pickSource: ')
 
-      this.sourcePath = await pickPath() ?? this.sourcePath
+      this.sourcePath = await this.pickPath() ?? this.sourcePath
 
       window.localStorage.setItem('recentSourcePath', this.sourcePath)
     },
@@ -132,9 +148,15 @@ const App = {
     async pickTarget () {
       console.log('pickTarget: ')
 
-      this.targetPath = await pickPath() ?? this.targetPath
+      this.targetPath = await this.pickPath() ?? this.targetPath
 
       window.localStorage.setItem('recentTargetPath', this.targetPath)
+    },
+
+    // 移除输入历史项
+    removeInputHistoryItem (key, index) {
+      this.inputLog[key].splice(index, 1)
+      historit.update(key, this.inputLog[key])
     },
 
     // 添加一组业务配置
@@ -356,3 +378,38 @@ const App = {
   }
 }
 Vue.createApp(App).mount('#app')
+
+/**
+ * 页首
+ */
+const Header = {
+  data () {
+    return {
+      appName: process.env.APP_NAME,
+      appVersion: process.env.VERSION
+    }
+  },
+
+  created () {
+    this.renderMeta()
+  },
+
+  methods: {
+    // 打开程序数据目录
+    openAppDataFolder () {
+      console.log('openAppDataFolder: ', appPathDict.data)
+
+      try {
+        shell.openPath(appPathDict.data)
+      } catch (error) {
+        console.error('openAppDirectory error: ', error)
+      }
+    },
+
+    // 渲染页面元信息
+    renderMeta () {
+      document.title = this.appName
+    }
+  }
+}
+Vue.createApp(Header).mount('#header')

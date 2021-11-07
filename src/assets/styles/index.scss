@@ -99,6 +99,7 @@ dd {
  */
 #page-main-index {
   header {
+    h1 {cursor: pointer;}
     #app-version {
       margin-left: 0.5rem;
     }
@@ -109,6 +110,12 @@ dd {
   }
 
   main {
+    .input-history {
+      li {display:flex;justify-content:space-between;
+        align-items: center;
+        cursor: pointer;}
+    }
+
     .biz-item {
       display: flex;
       margin: 20px 0;

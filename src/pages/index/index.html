@@ -7,7 +7,7 @@
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"
     />
-    <link rel="stylesheet" href="../../../static/styles/index.css" />
+    <link rel="stylesheet" href="../../static/styles/index.css" />
     <style>
       /* DEV ONLY: 页内样式仅用于开发/测试，生产环境的样式声明应移入主样式文件 ↑ */
     </style>
@@ -20,12 +20,12 @@
       </div>
     </noscript>
 
-    <header class="mb-4 bg-dark text-white">
+    <header id="header" class="mb-4 bg-dark text-white">
       <div
         class="container d-flex justify-content-between align-items-center py-2"
       >
-        <h1 id="app-name">AppCoder</h1>
-        <sup title="版本号" id="app-version" class="badge bg-light text-dark"></sup>
+        <h1 :title="`${appName} ${appVersion}版`" @click="openAppDataFolder">{{appName}}</h1>
+        <sup id="app-version" class="badge bg-light text-dark">{{appVersion}}</sup>
 
         <nav class="nav nav-pills gap-2">
           <li class="nav-item">
@@ -56,7 +56,7 @@
           <fieldset>
             <legend>路径</legend>
 
-            <div class="row justify-content-between align-items-center">
+            <div class="row justify-content-between align-items-start">
               <div class="col mt-0 form-group">
                 <label class="form-label">源/模板 *</label>
 
@@ -87,6 +87,18 @@
                 <div class="form-text d-flex align-items-start gap-2">
                   <span><i class="fal fa-info-square"></i></span>
                   <p>例如 <span id="sample-source-path">{{ sourcePathSample }}</span></p>
+                </div>
+
+                <div v-if="inputLog?.path" class="input-history">
+                  <ul class="list-unstyled">
+                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index">
+                      <span @click="changeInput('sourcePath', item)">{{ item }}</span>
+
+                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default" type="button">
+                        <i class="fal fa-times"></i>
+                      </button>
+                    </li>
+                  </ul>
                 </div>
               </div>
 
@@ -124,6 +136,18 @@
                 <div class="form-text d-flex align-items-start gap-2">
                   <span><i class="fal fa-info-square"></i></span>
                   <p>例如 <span id="target-source-path">{{ targetPathSample }}</span></p>
+                </div>
+
+                <div v-if="inputLog?.path" class="input-history">
+                  <ul class="list-unstyled">
+                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== sourcePath)" :key="index">
+                      <span @click="changeInput('targetPath', item)">{{ item }}</span>
+
+                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default" type="button">
+                        <i class="fal fa-times"></i>
+                      </button>
+                    </li>
+                  </ul>
                 </div>
               </div>
           </fieldset>
@@ -163,21 +187,6 @@
                   </div>
                 </div>
 
-                <div v-if="canParseTable" class="form-group">
-                  <div class="form-check form-switch">
-                    <input
-                      v-model="item.parseTable"
-                      name="parseTable"
-                      type="checkbox"
-                      class="form-check-input text-danger"
-                    />
-  
-                    <label class="form-check-label" for="parseTable">
-                      从数据库表解析结构</label
-                    >
-                  </div>
-                </div>
-
                 <div class="row">
                   <div class="col mt-0 form-group">
                     <label class="form-label">编码</label>
@@ -205,6 +214,21 @@
                       <span><i class="fal fa-info-square"></i></span>
                       <p>类名称的本地化语言</p>
                     </div>
+                  </div>
+                </div>
+
+                <div v-if="canParseTable" class="form-group">
+                  <div class="form-check form-switch">
+                    <input
+                      v-model="item.parseTable"
+                      name="parseTable"
+                      type="checkbox"
+                      class="form-check-input text-danger"
+                    />
+  
+                    <label class="form-check-label" for="parseTable">
+                      从数据库表解析结构</label
+                    >
                   </div>
                 </div>
 

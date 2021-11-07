@@ -1,7 +1,7 @@
 {
   "name": "appcoder_client_native",
   "productName": "AppCoder",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "低代码自动化应用开发平台",
   "author": "Kamas Lau<kamaslau@dingtalk.com>",
   "license": "UNLICENSED",
@@ -19,7 +19,7 @@
     "make-win": "electron-forge make --platform win32",
     "package": "electron-forge package",
     "start": "electron-forge start",
-    "doc": "jsdoc src/app/services/*.js -d docs",
+    "doc": "jsdoc src/services/*.js -d docs",
     "test": "jest"
   },
   "config": {
