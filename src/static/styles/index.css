@@ -41,6 +41,10 @@ h6 {
   margin: 0;
 }
 
+form p {
+  margin-bottom: 0;
+}
+
 /** 表单 **/
 fieldset {
   margin-bottom: 1.875rem;
@@ -113,16 +117,13 @@ dd {
   min-width: 240px;
   padding: 10px;
 }
+#page-main-index main .biz-item .biz-item-content .form-group {
+  margin-top: 0;
+}
 #page-main-index main #template-tag-intro {
   background-color: #f8f9fa;
   margin-top: 1.875rem;
   padding: 1.25rem;
-}
-#page-main-index main #template-tag-intro .template-tag-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
 }
 
 /*# sourceMappingURL=index.css.map */

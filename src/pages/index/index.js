@@ -4,7 +4,10 @@ const Vue = require('vue')
  * ===
  */
 window.onload = () => {
-  console.log('page/index/index window.onload at ', new Date().toLocaleString())
+  console.log(
+    'page/index/index window.onload at ',
+    new Date().toLocaleString()
+  )
 
   // 通知主进程已完成HTML、CSS加载
   if (ipcRenderer) ipcRenderer.send('pageOnload', { page: 'index' })
@@ -20,9 +23,13 @@ const App = {
       inputLog: null,
 
       // 路径
-      sourcePath: isDev ? appPathDict[process.env.SOURCE_DIR] : window.localStorage.getItem('recentSourcePath'),
+      sourcePath: isDev
+        ? appPathDict[process.env.SOURCE_DIR]
+        : window.localStorage.getItem('recentSourcePath'),
       sourcePathSample: appPathDict[process.env.SOURCE_DIR],
-      targetPath: isDev ? appPathDict[process.env.TARGET_DIR] : window.localStorage.getItem('recentTargetPath'),
+      targetPath: isDev
+        ? appPathDict[process.env.TARGET_DIR]
+        : window.localStorage.getItem('recentTargetPath'),
       targetPathSample: appPathDict[process.env.TARGET_DIR],
 
       // 业务
@@ -73,15 +80,16 @@ const App = {
     this.inputLog = historit.findMany()
 
     // DEV only
-    isDev && this.bizs.push({
-      ...this.bizItem,
-      code: 'USR',
-      name: 'user',
-      nameLocale: '用户',
-      parseTable: true,
-      table: 'user',
-      pk: 'userID'
-    })
+    isDev &&
+      this.bizs.push({
+        ...this.bizItem,
+        code: 'USR',
+        name: 'user',
+        nameLocale: '用户',
+        parseTable: true,
+        table: 'user',
+        pk: 'user_id'
+      })
   },
 
   methods: {
@@ -97,8 +105,8 @@ const App = {
     },
 
     /**
- * 选择路径
- */
+     * 选择路径
+     */
     async pickPath () {
       console.log('pickPath: ')
 
@@ -139,7 +147,7 @@ const App = {
     async pickSource () {
       console.log('pickSource: ')
 
-      this.sourcePath = await this.pickPath() ?? this.sourcePath
+      this.sourcePath = (await this.pickPath()) ?? this.sourcePath
 
       window.localStorage.setItem('recentSourcePath', this.sourcePath)
     },
@@ -148,7 +156,7 @@ const App = {
     async pickTarget () {
       console.log('pickTarget: ')
 
-      this.targetPath = await this.pickPath() ?? this.targetPath
+      this.targetPath = (await this.pickPath()) ?? this.targetPath
 
       window.localStorage.setItem('recentTargetPath', this.targetPath)
     },
@@ -225,7 +233,11 @@ const App = {
     async doClone () {
       console.log('doClone: ', this.sourcePath, this.targetPath)
 
-      const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath, false)
+      const errorMessage = this.verifyPaths(
+        this.sourcePath,
+        this.targetPath,
+        false
+      )
       if (errorMessage.length > 0) return window.alert(errorMessage)
 
       await clonePath(this.sourcePath, this.targetPath)
@@ -246,22 +258,27 @@ const App = {
       for (const item of this.bizs) {
         // （可选）解析数据表以获取字段信息
         if (item.parseTable) {
-          const columnsInfo = await this.parseTable(item.name) ?? []
+          const columnsInfo = (await this.parseTable(item.name)) ?? []
 
           // 补充字段名称本地化信息
           for (const column of columnsInfo) {
-            column.COLUMN_NAME_LOCALE = column.COLUMN_COMMENT.length > 0 ? this.parseNameLocaleFromComment(column.COLUMN_COMMENT) : ''
+            column.COLUMN_NAME_LOCALE =
+              column.COLUMN_COMMENT.length > 0
+                ? this.parseNameLocaleFromComment(column.COLUMN_COMMENT)
+                : ''
           }
 
           // 生成字段内容字符串
-          item.contentForm = this.composeFormContent(columnsInfo) ?? ''
-          item.contentList = this.composeListContent(columnsInfo) ?? ''
-          item.contentTable = this.composeTableContent(columnsInfo) ?? ''
+          item.contentForm = this.composeForm(columnsInfo) ?? ''
+          item.contentList = this.composeList(columnsInfo) ?? ''
+          item.contentTable = this.composeTable(columnsInfo) ?? ''
         }
 
-        const folederName = item.wrapInFolder ? item.name : ''
+        // console.log("biz item: ", item);
 
-        await clonePath(this.sourcePath, this.targetPath, folederName, item)
+        const folderName = item.wrapInFolder ? item.name : ''
+
+        await clonePath(this.sourcePath, this.targetPath, folderName, item)
       }
 
       // 上提模板标签说明DOM到视野之内
@@ -281,7 +298,7 @@ const App = {
       let result = null
 
       try {
-        result = await fetch(apiURL).then(response => {
+        result = await fetch(apiURL).then((response) => {
           console.log(response)
 
           if (response.status === 200) {
@@ -305,25 +322,35 @@ const App = {
     },
 
     // 组装表单型内容
-    composeFormContent (items) {
+    composeForm (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
 
       const readOnlyNames = ['createdAt', 'updatedAt', 'deletedAt'] // 只读字段
 
-      const formTemplate = '<input class="form-control" name="[[name]]" placeholder="[[nameLocale]]" [[required]] />' + '\r\n' // 表单模板
+      const formTemplate =
+        '<input class="form-control" name="[[name]]" placeholder="[[nameLocale]]" [[required]] />' +
+        '\r\n' // 表单模板
 
       for (const item of items) {
         // 跳过部分只读字段
-        if (readOnlyNames.includes(item.COLUMN_NAME) || item.COLUMN_KEY === 'PRI') {
+        if (
+          readOnlyNames.includes(item.COLUMN_NAME) ||
+          item.COLUMN_KEY === 'PRI'
+        ) {
           console.log(`${item.COLUMN_NAME} is skipped`)
           continue
         }
 
-        result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
-          .replaceAll('[[required]]', (item.IS_NULLABLE === 'YES' ? 'required' : ''))
-          .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+        result +=
+          formTemplate
+            .replaceAll('[[name]]', item.COLUMN_NAME)
+            .replaceAll(
+              '[[required]]',
+              item.IS_NULLABLE === 'YES' ? 'required' : ''
+            )
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
       }
 
       console.log(result)
@@ -332,16 +359,20 @@ const App = {
     },
 
     // 组装列表型内容
-    composeListContent (items) {
+    composeList (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
 
-      const formTemplate = '<li title="[[nameLocale]]([[name]])">[[nameLocale]]: {{ [[name]] }}</li>' + '\r\n' // 列表模板
+      const formTemplate =
+        '<li title="[[nameLocale]]([[name]])">[[nameLocale]]: {{ [[name]] }}</li>' +
+        '\r\n' // 列表模板
 
       for (const item of items) {
-        result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
-          .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+        result +=
+          formTemplate
+            .replaceAll('[[name]]', item.COLUMN_NAME)
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
       }
 
       console.log(result)
@@ -350,20 +381,26 @@ const App = {
     },
 
     // 组装表格型内容
-    composeTableContent (items) {
+    composeTable (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
 
       const formTemplate =
-      '<tr title="[[nameLocale]]([[name]])">' + '\r\n' +
-      '  <td>[[nameLocale]]</td>' + '\r\n' +
-      '  <td>{{ [[name]] }}</td>' + '\r\n' +
-      '</tr>' + '\r\n' // 表格模板
+        '<tr title="[[nameLocale]]([[name]])">' +
+        '\r\n' +
+        '  <td>[[nameLocale]]</td>' +
+        '\r\n' +
+        '  <td>{{ [[name]] }}</td>' +
+        '\r\n' +
+        '</tr>' +
+        '\r\n' // 表格模板
 
       for (const item of items) {
-        result += formTemplate.replaceAll('[[name]]', item.COLUMN_NAME)
-          .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+        result +=
+          formTemplate
+            .replaceAll('[[name]]', item.COLUMN_NAME)
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
       }
 
       console.log(result)

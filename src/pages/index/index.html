@@ -22,7 +22,7 @@
 
     <header id="header" class="mb-4 bg-dark text-white">
       <div
-        class="container d-flex justify-content-between align-items-center py-2"
+        class="container-fluid d-flex justify-content-between align-items-center py-2"
       >
         <h1 :title="`${appName} ${appVersion}版`" @click="openAppDataFolder">{{appName}}</h1>
         <sup id="app-version" class="badge bg-light text-dark">{{appVersion}}</sup>
@@ -50,7 +50,7 @@
 
     <!-- Actural Page Content -->
     <main id="app">
-      <div class="container">
+      <div class="container-fluid">
         <!-- 表单 -->
         <form class="form">
           <fieldset>
@@ -90,11 +90,11 @@
                 </div>
 
                 <div v-if="inputLog?.path" class="input-history">
-                  <ul class="list-unstyled">
-                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index">
+                  <ul class="list-group">
+                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index" class="list-group-item">
                       <span @click="changeInput('sourcePath', item)">{{ item }}</span>
 
-                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default" type="button">
+                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm" type="button">
                         <i class="fal fa-times"></i>
                       </button>
                     </li>
@@ -139,11 +139,11 @@
                 </div>
 
                 <div v-if="inputLog?.path" class="input-history">
-                  <ul class="list-unstyled">
-                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== sourcePath)" :key="index">
+                  <ul class="list-group">
+                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== sourcePath)" :key="index" class="list-group-item">
                       <span @click="changeInput('targetPath', item)">{{ item }}</span>
 
-                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default" type="button">
+                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm" type="button">
                         <i class="fal fa-times"></i>
                       </button>
                     </li>
@@ -155,7 +155,7 @@
           <fieldset>
             <legend>业务</legend>
 
-            <button title="添加业务项" @click="addBiz" type="button" class="btn btn-outline-primary">
+            <button title="添加业务项" @click="addBiz" type="button" class="btn btn-outline-primary btn-sm">
               <i class="fal fa-plus"></i>
             </button>
 
@@ -163,7 +163,7 @@
             <div v-for="(item, index) in bizs" :index="index" class="biz-item">
               <!-- 业务配置项操作 -->
               <div class="biz-item-ops">
-                <button title="移除当前项" @click="removeBiz(index)" type="button" class="btn btn-outline-warning">
+                <button title="移除当前项" @click="removeBiz(index)" type="button" class="btn btn-outline-warning btn-sm">
                   <i class="fal fa-minus"></i>
                 </button>
               </div>
@@ -381,27 +381,39 @@
           <div class="row">
             <div class="col">
               <h3>业务级别</h3>
-              <ul class="list-unstyled">
-                <li v-for="(item,index) in templateTags.module" class="template-tag-item">
-                  <div><code>{{item.literal}}</code> {{item.label}}</div>
-                  
-                  <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
-                    <i class="fal fa-copy"></i>
-                  </button>
-                </li>
-              </ul>
+
+              <table class="table table-striped table-hover">
+                <tbody>
+                  <tr v-for="(item,index) in templateTags.module" >
+                    <th scope="row"><code>{{item.literal}}</code></th>
+                    <td>{{item.label}}</td>
+                    <td>
+                      <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
+                        <i class="fal fa-copy"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             <div class="col">
               <h3>字段级别</h3>
-              <ul class="list-unstyled">
-                <li v-for="(item,index) in templateTags.names" class="template-tag-item">
-                  <div><code>{{item.literal}}</code> {{item.label}}</div>
-                  <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
-                    <i class="fal fa-copy"></i>
-                  </button>
-                </li>
-              </ul>
+
+              <table class="table table-striped table-hover">
+                <tbody>
+                  <tr v-for="(item,index) in templateTags.names" >
+                    <th scope="row"><code>{{item.literal}}</code></th>
+                    <td>{{item.label}}</td>
+                    <td>
+                      <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
+                        <i class="fal fa-copy"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
             </div>
           </div>
         </div>

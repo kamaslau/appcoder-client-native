@@ -79,13 +79,16 @@ const listFilesInDir = async (targetDir = null) => {
   // Fetch temp demo list
   let result = []
   try {
-    result = await fs.readdir(targetDir).then(
-      // filter out hidden files that might interfere supposed usage, such as .DS_Store (posibly resides in local macOS dev environments)
-      list => list.filter(item => !/(^|\/)\.[^/.]/g.test(item))
-    ).then(
-      // cancat path root to sole file names
-      list => list.map(item => path.join(targetDir, item))
-    )
+    result = await fs
+      .readdir(targetDir)
+      .then(
+        // filter out hidden files that might interfere supposed usage, such as .DS_Store (posibly resides in local macOS dev environments)
+        (list) => list.filter((item) => !/(^|\/)\.[^/.]/g.test(item))
+      )
+      .then(
+        // cancat path root to sole file names
+        (list) => list.map((item) => path.join(targetDir, item))
+      )
   } catch (error) {
     console.error('listFilesInDir error: ', error)
   }
@@ -95,7 +98,11 @@ const listFilesInDir = async (targetDir = null) => {
 }
 
 // 遍历并处理路径
-const processPath = async (rootPath, fileOp = async () => {}, dirOp = async () => {}) => {
+const processPath = async (
+  rootPath,
+  fileOp = async () => {},
+  dirOp = async () => {}
+) => {
   // console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
 
   // 获取当前路径下的所有文件
@@ -156,19 +163,27 @@ const packPath = async (sourcePath, targetPath) => {
   await processPath(sourcePath, fileOp)
 
   // 在内存中生成zip文件
-  const zipFileContent = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 9 } })
+  const zipFileContent = await zip.generateAsync({
+    type: 'nodebuffer',
+    compression: 'DEFLATE',
+    compressionOptions: { level: 9 }
+  })
   // console.log(zip.files)
 
   // 写入新文件到目标路径
-  const targetFilePath = `${targetPath}/${path.basename(sourcePath)}_clone_packed.zip`
+  const targetFilePath = `${targetPath}/${path.basename(
+    sourcePath
+  )}_clone_packed.zip`
 
   try {
-    fs.ensureFile(targetFilePath).then(() => {
-      fs.writeFile(targetFilePath, zipFileContent)
-    }).then(() => {
-      console.log('zip file path is targetFilePath: ', targetFilePath)
-      shell.openPath(targetPath) // 在文件管理器中打开目标路径
-    })
+    fs.ensureFile(targetFilePath)
+      .then(() => {
+        fs.writeFile(targetFilePath, zipFileContent)
+      })
+      .then(() => {
+        console.log('zip file path is targetFilePath: ', targetFilePath)
+        shell.openPath(targetPath) // 在文件管理器中打开目标路径
+      })
   } catch (error) {
     console.error(error)
   }
@@ -189,13 +204,20 @@ const clonePath = async (
 
   // 文件操作
   const fileOp = async (filePath) => {
+    const fileExtname = path.extname(filePath)
+
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
     const relativePath = filePath.substring(sourcePath.length)
-    const targetFilePath = path.join(
-      targetPath,
-      folderName,
-      relativePath
-    )
+    let targetFilePath = path.join(targetPath, folderName, relativePath)
+    // 若不以文件夹进行分组，则需应用业务名称为文件名
+    if (folderName === '') {
+      targetFilePath = replaceMatchedString(
+        targetFilePath,
+        path.basename(targetFilePath, fileExtname),
+        payload.name
+      )
+    }
+    console.log('targetFilePath: ', targetFilePath)
 
     if (payload === null) {
       // 创建镜像
@@ -214,9 +236,17 @@ const clonePath = async (
       let pageContent = await fs.readFile(filePath, 'utf8')
 
       // 处理特定后缀名的文件
-      if (['.js', '.json', '.html'].includes(path.extname(filePath))) {
+      const supportedExtnames = [
+        '.html',
+        '.js',
+        '.json',
+        '.php',
+        '.ts',
+        '.vue'
+      ]
+      if (supportedExtnames.includes(fileExtname)) {
         // 替换模板中的变量标识（[[变量名]]）为实际值
-        Object.keys(payload).forEach(name => {
+        Object.keys(payload).forEach((name) => {
           if (!payload[name]) return
 
           pageContent = replaceMatchedString(
@@ -225,6 +255,8 @@ const clonePath = async (
             payload[name]
           )
         })
+      } else {
+        console.warn(`${fileExtname} files are not supported now.`)
       }
 
       // console.log('pageContent: ', pageContent)

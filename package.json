@@ -1,7 +1,7 @@
 {
   "name": "appcoder_client_native",
   "productName": "AppCoder",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "低代码自动化应用开发平台",
   "author": "Kamas Lau<kamaslau@dingtalk.com>",
   "license": "UNLICENSED",
@@ -12,7 +12,7 @@
   "main": "src/app.js",
   "scripts": {
     "dev": "cross-env nodemon",
-    "format": "cross-env standard --fix 'src/**/*.*'",
+    "format": "cross-env ts-standard --fix 'src/**/*.*'",
     "make": "electron-forge make",
     "make-linux": "electron-forge make --platform linux",
     "make-mac": "electron-forge make --platform darwin",
@@ -21,6 +21,40 @@
     "start": "electron-forge start",
     "doc": "jsdoc src/services/*.js -d docs",
     "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kamaslau/appcoder_client_native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kamaslau/appcoder_client_native/issues"
+  },
+  "homepage": "https://github.com/kamaslau/appcoder_client_native#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.61",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
+    "@tsconfig/node16": "latest",
+    "@types/fs-extra": "latest",
+    "cross-env": "latest",
+    "electron": "^15",
+    "jest": "latest",
+    "jsdoc": "latest",
+    "nodemon": "latest",
+    "sass": "^1.43",
+    "ts-standard": "latest"
+  },
+  "dependencies": {
+    "@electron/remote": "^2",
+    "about-window": "^1.15",
+    "bootstrap": "^5",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-window-state": "^5.0.3",
+    "fs-extra": "^10",
+    "jszip": "^3",
+    "node-fetch": "^2",
+    "vue": "^3"
   },
   "config": {
     "forge": {
@@ -53,38 +87,5 @@
         }
       ]
     }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kamaslau/appcoder_client_native.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kamaslau/appcoder_client_native/issues"
-  },
-  "homepage": "https://github.com/kamaslau/appcoder_client_native#readme",
-  "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.61",
-    "@electron-forge/maker-dmg": "^6.0.0-beta.61",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
-    "@types/fs-extra": "latest",
-    "cross-env": "latest",
-    "electron": "^15",
-    "jest": "latest",
-    "jsdoc": "latest",
-    "nodemon": "latest",
-    "sass": "^1.43",
-    "standard": "^16"
-  },
-  "dependencies": {
-    "@electron/remote": "^2",
-    "about-window": "^1.15",
-    "bootstrap": "^5",
-    "electron-squirrel-startup": "^1.0.0",
-    "electron-window-state": "^5.0.3",
-    "fs-extra": "^10",
-    "jszip": "^3",
-    "node-fetch": "^2",
-    "vue": "^3"
   }
 }
