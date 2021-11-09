@@ -37,10 +37,10 @@ const App = {
         code: '',
         name: '',
         nameLocale: '',
+        wrapInFolder: false,
         parseTable: false,
         table: '',
-        pk: '',
-        wrapInFolder: true
+        pk: ''
       },
       bizs: [],
 
@@ -169,7 +169,16 @@ const App = {
 
     // 添加一组业务配置
     addBiz () {
-      this.bizs.push({ ...this.bizItem })
+      // 延续部分配置；最近一个业务项，或者默认项
+      const referenceItem =
+        this.bizs.length > 0 ? this.bizs[this.bizs.length - 1] : this.bizItem
+
+      this.bizs.push({
+        ...this.bizItem,
+
+        wrapInFolder: referenceItem.wrapInFolder,
+        parseTable: referenceItem.parseTable
+      })
     },
 
     // 转换业务编码为大写

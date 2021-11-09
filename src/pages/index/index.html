@@ -155,11 +155,7 @@
           <fieldset>
             <legend>业务</legend>
 
-            <button title="添加业务项" @click="addBiz" type="button" class="btn btn-outline-primary btn-sm">
-              <i class="fal fa-plus"></i>
-            </button>
-
-            <!-- 业务配置项 -->
+            <!-- 业务配置项列表 -->
             <div v-for="(item, index) in bizs" :index="index" class="biz-item">
               <!-- 业务配置项操作 -->
               <div class="biz-item-ops">
@@ -258,6 +254,11 @@
                 </template>
               </div>
             </div>
+
+            <!-- 添加业务配置项 -->
+            <button title="添加业务项" @click="addBiz" type="button" class="btn btn-outline-primary btn-sm">
+              <i class="fal fa-plus"></i>
+            </button>
           </fieldset>
 
           <!-- 数据结构API -->

@@ -58,7 +58,7 @@ Router.get('/', async (ctx) => {
   }
 
   const sorter =
-    (ctx.query.sorter && ctx.query.sorter.length) > 0
+    ctx.query.sorter?.length > 0
       ? Basic.composeSorter(ctx.query.sorter, allowedSorters)
       : {} // 排序器
   const filter = undefined // 筛选器
