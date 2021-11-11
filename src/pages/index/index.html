@@ -91,10 +91,10 @@
 
                 <div v-if="inputLog?.path" class="input-history">
                   <ul class="list-group">
-                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index" class="list-group-item">
-                      <span @click="changeInput('sourcePath', item)">{{ item }}</span>
+                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index" @click="changeInput('sourcePath', item)" class="list-group-item">
+                      <span>{{ item }}</span>
 
-                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm" type="button">
+                      <button @click.stop="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm" type="button">
                         <i class="fal fa-times"></i>
                       </button>
                     </li>
@@ -343,6 +343,7 @@
 
             <button
               @click="doPack"
+              :disabled="sourcePath.length === 0 || targetPath.length === 0"
               title="打包"
               type="button"
               class="btn btn-secondary"
@@ -352,6 +353,7 @@
 
             <button
               @click="doClone"
+              :disabled="sourcePath.length === 0 || targetPath.length === 0"
               title="克隆/创建镜像副本"
               type="button"
               class="btn btn-secondary"
