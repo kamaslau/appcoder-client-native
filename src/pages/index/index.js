@@ -40,7 +40,7 @@ const App = {
         wrapInFolder: false,
         parseTable: false,
         table: '',
-        pk: ''
+        pk: 'id'
       },
       bizs: [],
 
@@ -88,7 +88,7 @@ const App = {
         nameLocale: '用户',
         parseTable: true,
         table: 'user',
-        pk: 'user_id'
+        pk: 'id'
       })
   },
 

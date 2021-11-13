@@ -1,7 +1,7 @@
 {
   "productName": "AppCoder",
   "name": "appcoder_client_native",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "低代码自动化应用开发平台",
   "author": {
     "name": "Liu, Yajie",
@@ -21,18 +21,11 @@
     "make-mac": "electron-forge make --platform darwin",
     "make-win": "electron-forge make --platform win32",
     "package": "electron-forge package",
+    "prepare:icon": "./node_modules/.bin/electron-icon-maker --input=/Users/kamaslau/github/appcoder_client_native/src/assets/images/logo.png --output=./src/assets/images/logos",
     "start": "electron-forge start",
     "doc": "jsdoc src/services/*.js -d docs",
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kamaslau/appcoder_client_native.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kamaslau/appcoder_client_native/issues"
-  },
-  "homepage": "https://github.com/kamaslau/appcoder_client_native#readme",
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.61",
     "@electron-forge/maker-dmg": "^6.0.0-beta.61",
@@ -42,6 +35,7 @@
     "@types/fs-extra": "latest",
     "cross-env": "latest",
     "electron": "^15",
+    "electron-icon-maker": "^0.0.5",
     "jest": "latest",
     "jsdoc": "latest",
     "nodemon": "latest",
@@ -90,5 +84,13 @@
         }
       ]
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kamaslau/appcoder_client_native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kamaslau/appcoder_client_native/issues"
+  },
+  "homepage": "https://github.com/kamaslau/appcoder_client_native#readme"
 }
