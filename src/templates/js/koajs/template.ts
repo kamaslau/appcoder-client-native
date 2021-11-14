@@ -57,7 +57,8 @@ Router.get('/', async (ctx) => {
   const apiCode = `${routeCode}1`
   const body: BasicTypes.responseBody = {
     apiCode,
-    inputBody: ctx.request.body
+    inputBody: ctx.request.body,
+    inputQuery: ctx.query
   }
 
   const sorter =
@@ -65,9 +66,11 @@ Router.get('/', async (ctx) => {
       ? Basic.composeSorter(ctx.query.sorter, allowedSorters)
       : {} // 排序器
   const filter = undefined // 筛选器
+  const offset = ctx.query?.offset ? Number(ctx.query.offset) : 0
+  const limit = ctx.query?.limit ? Number(ctx.query.limit) : undefined
 
   const basicModel = new BasicModel(modelName, ctx) // Init model
-  const result = await basicModel.findMany(filter, sorter)
+  const result = await basicModel.findMany(filter, sorter, offset, limit)
   body.data = result
 
   ctx.status = result.length === 0 ? 404 : 200

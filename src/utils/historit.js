@@ -36,7 +36,7 @@ const readFile = (path) => {
 }
 
 class Historit {
-  constructor(filePath, keys) {
+  constructor (filePath, keys) {
     this.filePath = filePath
 
     if (Array.isArray(keys)) {
@@ -50,7 +50,7 @@ class Historit {
     this.initFile()
   }
 
-  initFile(keys) {
+  initFile (keys) {
     touchFile(this.filePath)
 
     let content = readFile(this.filePath)
@@ -65,7 +65,7 @@ class Historit {
     return content
   }
 
-  create(key, value) {
+  create (key, value) {
     const content = this.findMany()
     console.log(content[key])
     content[key] = Array.from(new Set([...content[key], value])) // 去重
@@ -75,7 +75,7 @@ class Historit {
     return content
   }
 
-  update(key, payload) {
+  update (key, payload) {
     const content = this.findMany()
     console.log(content[key])
 
@@ -86,13 +86,13 @@ class Historit {
     return content
   }
 
-  findMany(key = null) {
+  findMany (key = null) {
     const content = readFile(this.filePath)
 
     return key === null ? content : content[key]
   }
 
-  remove(key = null) {
+  remove (key = null) {
     let content = {}
 
     if (key === null) {
