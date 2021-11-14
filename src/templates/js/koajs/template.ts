@@ -8,6 +8,8 @@
  *
  * 路由
  * https://github.com/koajs/router/blob/master/API.md
+ * import [[name]] from './[[name]]'
+ * Router.use('/[[name]]', [[name]].routes(), [[name]].allowedMethods())
  *
  * author: Kamas Lau<kamaslau@dingtalk.com>
  */
@@ -19,8 +21,9 @@ const Router = new KoaRouter()
 
 // 基础配置
 const routeCode: string = '[[code]]' // 路由编码
-const modelName: string = '[[name]]' // 数据表名称
-const pkName: string = '[[pk]]' // 主键名
+const modelName: string = '[[name]]' // 模块名称
+const modelNameLocale: string = '[[nameLocale]]' // 模块本地化名称
+const pkName: string = '[[pk]]' // 相关数据表主键名
 
 // 可排序字段
 const defaultSorter = { ...Basic.defaultSorter }

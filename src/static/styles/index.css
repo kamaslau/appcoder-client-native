@@ -105,6 +105,13 @@ dd {
   align-items: center;
   cursor: pointer;
 }
+#page-main-index main .biz-items-op {
+  background-color: #f8f9fa;
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 20px;
+}
 #page-main-index main .biz-item {
   display: flex;
   margin: 20px 0;

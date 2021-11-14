@@ -1,430 +1,405 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-  <head>
-    <meta charset="utf-8" />
-    <title>应用首页</title>
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'unsafe-inline' 'unsafe-eval';"
-    />
-    <link rel="stylesheet" href="../../static/styles/index.css" />
-    <style>
-      /* DEV ONLY: 页内样式仅用于开发/测试，生产环境的样式声明应移入主样式文件 ↑ */
-    </style>
-  </head>
 
-  <body id="page-main-index">
-    <noscript class="container-fluid">
-      <div class="alert alert-warning">
-        <p>您的浏览器未正常工作，请检查是否关闭了JavaScript相关功能。</p>
-      </div>
-    </noscript>
+<head>
+  <meta charset="utf-8" />
+  <title>应用首页</title>
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval';" />
+  <link rel="stylesheet" href="../../static/styles/index.css" />
+  <style>
+    /* DEV ONLY: 页内样式仅用于开发/测试，生产环境的样式声明应移入主样式文件 ↑ */
+  </style>
+</head>
 
-    <header id="header" class="mb-4 bg-dark text-white">
-      <div
-        class="container-fluid d-flex justify-content-between align-items-center py-2"
-      >
-        <h1 :title="`${appName} ${appVersion}版`" @click="openAppDataFolder">{{appName}}</h1>
-        <sup id="app-version" class="badge bg-light text-dark">{{appVersion}}</sup>
+<body id="page-main-index">
+  <noscript class="container-fluid">
+    <div class="alert alert-warning">
+      <p>您的浏览器未正常工作，请检查是否关闭了JavaScript相关功能。</p>
+    </div>
+  </noscript>
 
-        <nav class="nav nav-pills gap-2">
-          <li class="nav-item">
-            <a title="首页" class="nav-link active" href="index.html">
-              <i class="fal fa-home"></i> 首页
-            </a>
-          </li>
+  <header id="header" class="mb-4 bg-dark text-white">
+    <div class="container-fluid d-flex justify-content-between align-items-center py-2">
+      <h1 :title="`${appName} ${appVersion}版`" @click="openAppDataFolder">{{appName}}</h1>
+      <sup id="app-version" class="badge bg-light text-dark">{{appVersion}}</sup>
 
-          <li class="nav-item">
-            <a
-              title="官网"
-              class="nav-link"
-              href="http://www.appcoder.io?from=clientNative"
-              target="_blank"
-            >
-              <i class="fal fa-external-link"></i> 官网
-            </a>
-          </li>
-        </nav>
-      </div>
-    </header>
+      <nav class="nav nav-pills gap-2">
+        <li class="nav-item">
+          <a title="首页" class="nav-link active" href="index.html">
+            <i class="fal fa-home"></i> 首页
+          </a>
+        </li>
 
-    <!-- Actural Page Content -->
-    <main id="app">
-      <div class="container-fluid">
-        <!-- 表单 -->
-        <form class="form">
-          <fieldset>
-            <legend>路径</legend>
+        <li class="nav-item">
+          <a title="官网" class="nav-link" href="http://www.appcoder.io?from=clientNative" target="_blank">
+            <i class="fal fa-external-link"></i> 官网
+          </a>
+        </li>
+      </nav>
+    </div>
+  </header>
 
-            <div class="row justify-content-between align-items-start">
-              <div class="col mt-0 form-group">
-                <label class="form-label">源/模板 *</label>
+  <!-- Actural Page Content -->
+  <main id="app">
+    <div class="container-fluid">
+      <!-- 表单 -->
+      <form class="form">
+        <fieldset>
+          <legend>路径</legend>
 
-                <div class="input-group">
-                  <div class="input-group-text">
-                    <button
-                      @click="pickSource"
-                      type="button"
-                      class="btn btn-default"
-                    >
-                      <span class="fa-stack">
-                        <i class="fas fa-folder fa-stack-2x"></i>
-                        <i
-                          class="fal fa-arrow-from-left fa-stack-1x fa-inverse"
-                        ></i>
-                      </span>
+          <div class="row justify-content-between align-items-start">
+            <div class="col mt-0 form-group">
+              <label class="form-label">源/模板 *</label>
+
+              <div class="input-group">
+                <div class="input-group-text">
+                  <button @click="pickSource" type="button" class="btn btn-default">
+                    <span class="fa-stack">
+                      <i class="fas fa-folder fa-stack-2x"></i>
+                      <i class="fal fa-arrow-from-left fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </button>
+                </div>
+
+                <input v-model="sourcePath" class="form-control" readonly required />
+              </div>
+
+              <div class="form-text d-flex align-items-start gap-2">
+                <span><i class="fal fa-info-square"></i></span>
+                <p>例如 <span id="sample-source-path">{{ sourcePathSample }}</span></p>
+              </div>
+
+              <div v-if="inputLog?.path" class="input-history">
+                <ul class="list-group">
+                  <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index"
+                    @click="changeInput('sourcePath', item)" class="list-group-item">
+                    <span>{{ item }}</span>
+
+                    <button @click.stop="removeInputHistoryItem('path', index)" title="清除此项"
+                      class="btn btn-default btn-sm" type="button">
+                      <i class="fal fa-times"></i>
                     </button>
-                  </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-                  <input
-                    v-model="sourcePath"
-                    class="form-control"
-                    readonly
-                    required
-                  />
+            <div class="col-1 mt-0 text-center">
+              <span><i class="fas fa-arrow-right"></i></span>
+            </div>
+
+            <div class="col mt-0 form-group">
+              <label class="form-label">目标 *</label>
+
+              <div class="input-group">
+                <div class="input-group-text">
+                  <button @click="pickTarget" type="button" class="btn btn-default">
+                    <span class="fa-stack">
+                      <i class="fas fa-folder fa-stack-2x"></i>
+                      <i class="fal fa-arrow-to-right fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </button>
                 </div>
 
-                <div class="form-text d-flex align-items-start gap-2">
-                  <span><i class="fal fa-info-square"></i></span>
-                  <p>例如 <span id="sample-source-path">{{ sourcePathSample }}</span></p>
-                </div>
-
-                <div v-if="inputLog?.path" class="input-history">
-                  <ul class="list-group">
-                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index" @click="changeInput('sourcePath', item)" class="list-group-item">
-                      <span>{{ item }}</span>
-
-                      <button @click.stop="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm" type="button">
-                        <i class="fal fa-times"></i>
-                      </button>
-                    </li>
-                  </ul>
-                </div>
+                <input v-model="targetPath" class="form-control" readonly required />
               </div>
 
-              <div class="col-1 mt-0 text-center">
-                <span><i class="fas fa-arrow-right"></i></span>
+              <div class="form-text d-flex align-items-start gap-2">
+                <span><i class="fal fa-info-square"></i></span>
+                <p>例如 <span id="target-source-path">{{ targetPathSample }}</span></p>
               </div>
 
-              <div class="col mt-0 form-group">
-                <label class="form-label">目标 *</label>
+              <div v-if="inputLog?.path" class="input-history">
+                <ul class="list-group">
+                  <li v-for="(item, index) in inputLog?.path.filter(item => item !== sourcePath)" :key="index"
+                    class="list-group-item">
+                    <span @click="changeInput('targetPath', item)">{{ item }}</span>
 
-                <div class="input-group">
-                  <div class="input-group-text">
-                    <button
-                      @click="pickTarget"
-                      type="button"
-                      class="btn btn-default"
-                    >
-                      <span class="fa-stack">
-                        <i class="fas fa-folder fa-stack-2x"></i>
-                        <i
-                          class="fal fa-arrow-to-right fa-stack-1x fa-inverse"
-                        ></i>
-                      </span>
+                    <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm"
+                      type="button">
+                      <i class="fal fa-times"></i>
                     </button>
-                  </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </fieldset>
 
-                  <input
-                    v-model="targetPath"
-                    class="form-control"
-                    readonly
-                    required
-                  />
+        <fieldset>
+          <legend>业务</legend>
+
+          <!-- 业务全局配置 -->
+          <div class="form-group">
+            <div class="form-check form-switch">
+              <input v-model="bizConfigGlobal.wrapInFolder" name="bizConfigGlobal.wrapInFolder" type="checkbox"
+                class="form-check-input text-danger" />
+
+              <label class="form-check-label" for="bizConfigGlobal.wrapInFolder">
+                创建业务文件夹
+              </label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input v-model="bizConfigGlobal.renameFile" name="bizConfigGlobal.renameFile" type="checkbox"
+                class="form-check-input text-danger" />
+
+              <label class="form-check-label" for="bizConfigGlobal.renameFile">
+                重命名文件
+              </label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input v-model="bizConfigGlobal.parseTable" name="bizConfigGlobal.parseTable" type="checkbox"
+                class="form-check-input text-danger" />
+
+              <label class="form-check-label" for="bizConfigGlobal.parseTable">
+                从数据库表解析结构</label>
+            </div>
+          </div>
+
+          <!-- 业务配置项操作（顶部） -->
+          <div class="biz-items-op">
+            <button title="添加业务配置项" @click="addBiz" type="button" class="btn btn-outline-primary btn-sm">
+              <i class="fal fa-plus  fa-fw"></i>
+            </button>
+
+            <button title="清空业务配置项" v-if="bizs.length > 0" @click="bizs = []" type="button"
+              class="btn btn-outline-danger btn-sm">
+              <i class="fal fa-times  fa-fw"></i>
+            </button>
+          </div>
+
+          <!-- 业务配置项列表 -->
+          <div v-for="(item, index) in bizs" :index="index" class="biz-item">
+            <!-- 业务配置项操作 -->
+            <div class="biz-item-ops">
+              <button title="移除当前项" @click="removeBiz(index)" type="button" class="btn btn-outline-warning btn-sm">
+                <i class="fal fa-minus fa-fw"></i>
+              </button>
+            </div>
+
+            <!-- 业务配置单项内容 -->
+            <div class="biz-item-content bg-light">
+              <div class="form-group">
+                <div class="form-check form-switch">
+                  <input v-model="item.wrapInFolder" name="wrapInFolder" type="checkbox"
+                    class="form-check-input text-danger" />
+
+                  <label class="form-check-label" for="wrapInFolder">
+                    创建业务文件夹
+                    <code v-if="item.wrapInFolder">{{ targetPath || '目标路径' }}/{{ item.name || '请输入业务名称' }}</code>
+                  </label>
                 </div>
 
-                <div class="form-text d-flex align-items-start gap-2">
-                  <span><i class="fal fa-info-square"></i></span>
-                  <p>例如 <span id="target-source-path">{{ targetPathSample }}</span></p>
-                </div>
+                <div class="form-check form-switch">
+                  <input v-model="item.renameFile" name="renameFile" type="checkbox"
+                    class="form-check-input text-danger" />
 
-                <div v-if="inputLog?.path" class="input-history">
-                  <ul class="list-group">
-                    <li v-for="(item, index) in inputLog?.path.filter(item => item !== sourcePath)" :key="index" class="list-group-item">
-                      <span @click="changeInput('targetPath', item)">{{ item }}</span>
-
-                      <button @click="removeInputHistoryItem('path', index)" title="清除此项" class="btn btn-default btn-sm" type="button">
-                        <i class="fal fa-times"></i>
-                      </button>
-                    </li>
-                  </ul>
+                  <label class="form-check-label" for="renameFile">
+                    重命名文件
+                    <code v-if="item.renameFile">{{ item.name }}.后缀名</code>
+                  </label>
                 </div>
               </div>
-          </fieldset>
 
-          <fieldset>
-            <legend>业务</legend>
+              <div class="row">
+                <div class="col mt-0 form-group">
+                  <label class="form-label">编码</label>
 
-            <!-- 业务配置项列表 -->
-            <div v-for="(item, index) in bizs" :index="index" class="biz-item">
-              <!-- 业务配置项操作 -->
-              <div class="biz-item-ops">
-                <button title="移除当前项" @click="removeBiz(index)" type="button" class="btn btn-outline-warning btn-sm">
-                  <i class="fal fa-minus"></i>
-                </button>
-              </div>
-
-              <!-- 业务配置项内容 -->
-              <div class="biz-item-content bg-light">
-                <div class="form-group">
-                  <div class="form-check form-switch">
-                    <input
-                      v-model="item.wrapInFolder"
-                      name="wrapInFolder"
-                      type="checkbox"
-                      class="form-check-input text-danger"
-                    />
-    
-                    <label class="form-check-label" for="wrapInFolder">
-                      创建业务文件夹
-                      <code v-if="item.wrapInFolder">{{ targetPath || '目标路径' }}/{{ item.name || '业务名称' }}</code>
-                      </label
-                    >
-                  </div>
+                  <input v-model="item.code" class="form-control" placeholder="例如：USR" @change="upperBizCode(index)" />
                 </div>
 
+                <div class="col mt-0 form-group">
+                  <label class="form-label">名称 *</label>
+
+                  <input v-model="item.name" class="form-control" placeholder="例如：user" @input="mapBizDefaults(index)"
+                    required />
+                </div>
+
+                <div class="col mt-0 form-group">
+                  <label class="form-label">本地化名称 *</label>
+
+                  <input v-model="item.nameLocale" class="form-control" placeholder="例如：用户" required />
+
+                  <div class="form-text d-flex align-items-start gap-2">
+                    <span><i class="fal fa-info-square"></i></span>
+                    <p>类名称的本地化语言</p>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="canParseTable" class="form-group">
+                <div class="form-check form-switch">
+                  <input v-model="item.parseTable" name="parseTable" type="checkbox"
+                    class="form-check-input text-danger" />
+
+                  <label class="form-check-label" for="parseTable">
+                    从数据库表解析结构</label>
+                </div>
+              </div>
+
+              <template v-if="item.parseTable">
                 <div class="row">
                   <div class="col mt-0 form-group">
-                    <label class="form-label">编码</label>
-      
-                    <input v-model="item.code" class="form-control" placeholder="例如：USR" @change="upperBizCode(index)"/>
+                    <label class="form-label">表名</label>
+
+                    <input v-model="item.table" class="form-control" placeholder="数据表名称" required />
                   </div>
 
                   <div class="col mt-0 form-group">
-                    <label class="form-label">名称 *</label>
+                    <label class="form-label">主键名</label>
 
-                    <input v-model="item.name" class="form-control" placeholder="例如：user" @input="mapBizDefaults(index)" required />
-                  </div>
-    
-                  <div class="col mt-0 form-group">
-                    <label class="form-label">本地化名称 *</label>
-      
-                    <input
-                      v-model="item.nameLocale"
-                      class="form-control"
-                      placeholder="例如：用户"
-                      required
-                    />
-
-                    <div class="form-text d-flex align-items-start gap-2">
-                      <span><i class="fal fa-info-square"></i></span>
-                      <p>类名称的本地化语言</p>
-                    </div>
+                    <input v-model="item.pk" class="form-control" placeholder="数据表的主键字段名称" />
                   </div>
                 </div>
-
-                <div v-if="canParseTable" class="form-group">
-                  <div class="form-check form-switch">
-                    <input
-                      v-model="item.parseTable"
-                      name="parseTable"
-                      type="checkbox"
-                      class="form-check-input text-danger"
-                    />
-  
-                    <label class="form-check-label" for="parseTable">
-                      从数据库表解析结构</label
-                    >
-                  </div>
-                </div>
-
-                <template v-if="item.parseTable">
-                  <div class="row">
-                    <div class="col mt-0 form-group">
-                      <label class="form-label">表名</label>
-
-                      <input
-                        v-model="item.table"
-                        class="form-control"
-                        placeholder="数据表名称"
-                        required
-                      />
-                    </div>
-
-                    <div class="col mt-0 form-group">
-                      <label class="form-label">主键名</label>
-
-                      <input
-                        v-model="item.pk"
-                        class="form-control"
-                        placeholder="数据表的主键字段名称"
-                      />
-                    </div>
-                  </div>
-                </template>
-              </div>
+              </template>
             </div>
-
-            <!-- 添加业务配置项 -->
-            <button title="添加业务项" @click="addBiz" type="button" class="btn btn-outline-primary btn-sm">
-              <i class="fal fa-plus"></i>
-            </button>
-          </fieldset>
-
-          <!-- 数据结构API -->
-          <fieldset>
-            <legend>
-              数据结构API
-              <div class="d-inline-flex">
-                <span class="badge text-info"><i class="fal fa-info-square"></i> 高级功能</span>
-              </div>
-            </legend>
-
-            <div class="form-group">
-              <label class="form-label">路径</label>
-
-              <div>
-                <input
-                  v-model="api.url"
-                  class="form-control"
-                  required
-                />
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- TODO 数据库 -->
-          <fieldset v-if="canParseTable && false">
-            <legend>
-              数据库
-              <div class="d-inline-flex">
-                <span class="badge text-info"><i class="fal fa-info-square"></i> 高级功能</span>
-                <span class="badge text-warning"><i class="fal fa-info-square"></i> 开发中</span>
-              </div>
-            </legend>
-
-            <div class="form-group">
-              <label class="form-label">路径</label>
-
-              <div>
-                <input
-                  v-model="db.url"
-                  class="form-control"
-                  required
-                />
-
-                <div class="form-text d-flex align-items-start gap-2">
-                  <span><i class="fal fa-info-square"></i></span>
-                  <p>格式为 mysql://USER:PASSWORD@HOST:PORT/DB_NAME</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="row justify-content-between align-items-center">
-              <div class="col mt-0 form-group">
-                <label class="form-label">库名</label>
-
-                <div>
-                  <input
-                    v-model="db.db"
-                    class="form-control"
-                    placeholder="数据库名称"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- TODO 配置 -->
-          <fieldset>
-          </fieldset>
-
-          <!-- 表单操作栏 -->
-          <div class="form-footer">
-            <button
-              id="button-reset"
-              title="重置表单"
-              type="reset"
-              class="btn btn-default"
-            >
-              <i class="fal fa-redo"></i> 重置
-            </button>
-
-            <button
-              @click="doPack"
-              :disabled="sourcePath.length === 0 || targetPath.length === 0"
-              title="打包"
-              type="button"
-              class="btn btn-secondary"
-            >
-              <i class="fal fa-pallet"></i> 打包
-            </button>
-
-            <button
-              @click="doClone"
-              :disabled="sourcePath.length === 0 || targetPath.length === 0"
-              title="克隆/创建镜像副本"
-              type="button"
-              class="btn btn-secondary"
-            >
-              <i class="fal fa-code-branch"></i> 克隆
-            </button>
-
-            <button
-              @click="doGenerate"
-              :disabled="bizs.length === 0 || bizs[0].name.length === 0"
-              title="生成/创建定制化副本"
-              type="button"
-              class="btn btn-primary"
-            >
-              <i class="fal fa-code-merge"></i> 生成
-            </button>
-          </div>
-        </form>
-
-        <!-- 模板文件可用内容标签说明 -->
-        <div id="template-tag-intro" ref="templateTagIntro">
-          <h2>模板标签</h2>
-          <div class="alert alert-info">
-            <p>模板标签是以”[[“和”]]“包裹的字符串，例如 <code>[[name]]</code>。</p>
-            <p>在模板文件中，你可以使用以下模板标签，来标记需要进行生成的内容。</p>
           </div>
 
-          <div class="row">
-            <div class="col">
-              <h3>业务级别</h3>
+          <!-- 业务配置项操作（底部） -->
+          <div v-if="bizs.length > 0" class="biz-items-op">
+            <button title="添加业务配置项" @click="addBiz" type="button" class="btn btn-outline-primary btn-sm">
+              <i class="fal fa-plus  fa-fw"></i>
+            </button>
 
-              <table class="table table-striped table-hover">
-                <tbody>
-                  <tr v-for="(item,index) in templateTags.module" >
-                    <th scope="row"><code>{{item.literal}}</code></th>
-                    <td>{{item.label}}</td>
-                    <td>
-                      <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
-                        <i class="fal fa-copy"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <button title="清空业务配置项" @click="bizs = []" type="button" class="btn btn-outline-danger btn-sm">
+              <i class="fal fa-times fa-fw"></i>
+            </button>
+          </div>
+        </fieldset>
+
+        <!-- 数据结构API -->
+        <fieldset>
+          <legend>
+            数据结构API
+            <div class="d-inline-flex">
+              <span class="badge text-info"><i class="fal fa-info-square"></i> 高级功能</span>
             </div>
+          </legend>
 
-            <div class="col">
-              <h3>字段级别</h3>
+          <div class="form-group">
+            <label class="form-label">路径</label>
 
-              <table class="table table-striped table-hover">
-                <tbody>
-                  <tr v-for="(item,index) in templateTags.names" >
-                    <th scope="row"><code>{{item.literal}}</code></th>
-                    <td>{{item.label}}</td>
-                    <td>
-                      <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
-                        <i class="fal fa-copy"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
+            <div>
+              <input v-model="api.url" class="form-control" required />
             </div>
+          </div>
+        </fieldset>
+
+        <!-- TODO 数据库 -->
+        <fieldset v-if="canParseTable && false">
+          <legend>
+            数据库
+            <div class="d-inline-flex">
+              <span class="badge text-info"><i class="fal fa-info-square"></i> 高级功能</span>
+              <span class="badge text-warning"><i class="fal fa-info-square"></i> 开发中</span>
+            </div>
+          </legend>
+
+          <div class="form-group">
+            <label class="form-label">路径</label>
+
+            <div>
+              <input v-model="db.url" class="form-control" required />
+
+              <div class="form-text d-flex align-items-start gap-2">
+                <span><i class="fal fa-info-square"></i></span>
+                <p>格式为 mysql://USER:PASSWORD@HOST:PORT/DB_NAME</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row justify-content-between align-items-center">
+            <div class="col mt-0 form-group">
+              <label class="form-label">库名</label>
+
+              <div>
+                <input v-model="db.db" class="form-control" placeholder="数据库名称" required />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- TODO 配置 -->
+        <fieldset>
+        </fieldset>
+
+        <!-- 表单操作栏 -->
+        <div class="form-footer">
+          <button id="button-reset" title="重置表单" type="reset" class="btn btn-default">
+            <i class="fal fa-redo"></i> 重置
+          </button>
+
+          <button @click="doPack" :disabled="sourcePath.length === 0 || targetPath.length === 0" title="打包"
+            type="button" class="btn btn-secondary">
+            <i class="fal fa-pallet"></i> 打包
+          </button>
+
+          <button @click="doClone" :disabled="sourcePath.length === 0 || targetPath.length === 0" title="克隆/创建镜像副本"
+            type="button" class="btn btn-secondary">
+            <i class="fal fa-code-branch"></i> 克隆
+          </button>
+
+          <button @click="doGenerate" :disabled="bizs.length === 0 || bizs[0].name.length === 0" title="生成/创建定制化副本"
+            type="button" class="btn btn-primary">
+            <i class="fal fa-code-merge"></i> 生成
+          </button>
+        </div>
+      </form>
+
+      <!-- 模板文件可用内容标签说明 -->
+      <div id="template-tag-intro" ref="templateTagIntro">
+        <h2>模板标签</h2>
+        <div class="alert alert-info">
+          <p>模板标签是以”[[“和”]]“包裹的字符串，例如 <code>[[name]]</code>。</p>
+          <p>在模板文件中，你可以使用以下模板标签，来标记需要进行生成的内容。</p>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <h3>业务级别</h3>
+
+            <table class="table table-striped table-hover">
+              <tbody>
+                <tr v-for="(item,index) in templateTags.module">
+                  <th scope="row"><code>{{item.literal}}</code></th>
+                  <td>{{item.label}}</td>
+                  <td>
+                    <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
+                      <i class="fal fa-copy"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <h3>字段级别</h3>
+
+            <table class="table table-striped table-hover">
+              <tbody>
+                <tr v-for="(item,index) in templateTags.names">
+                  <th scope="row"><code>{{item.literal}}</code></th>
+                  <td>{{item.label}}</td>
+                  <td>
+                    <button @click="doCopy(item.literal)" title="复制" type="button" class="btn btn-light">
+                      <i class="fal fa-copy"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
           </div>
         </div>
       </div>
-    </main>
-    <!-- end content -->
-  </body>
+    </div>
+  </main>
+  <!-- end content -->
+</body>
 
-  <script defer src="../../services/index.js"></script>
-  <script defer src="./index.js"></script>
+<script defer src="../../services/index.js"></script>
+<script defer src="./index.js"></script>
+
 </html>

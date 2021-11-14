@@ -127,6 +127,14 @@ dd {
       }
     }
 
+    .biz-items-op {
+      background-color: $color-light;
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      padding: 20px;
+    }
+
     .biz-item {
       display: flex;
       margin: 20px 0;

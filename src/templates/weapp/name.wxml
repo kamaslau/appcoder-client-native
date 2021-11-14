@@ -1,0 +1,9 @@
+<!-- [[name]].wxml -->
+<!-- https://developers.weixin.qq.com/miniprogram/dev/framework/quickstart/code.html#WXML-%E6%A8%A1%E6%9D%BF -->
+<!-- https://developers.weixin.qq.com/miniprogram/dev/reference/wxml/ -->
+
+<view class="container">
+  <view title="[[nameLocale]]" class="h2">[[nameLocale]]</view>
+
+  {{ items }}
+</view>

@@ -195,6 +195,7 @@ const packPath = async (sourcePath, targetPath) => {
 const clonePath = async (
   sourcePath = null,
   targetPath = null,
+  renameFile = true,
   folderName = '',
   payload = null
 ) => {
@@ -209,8 +210,9 @@ const clonePath = async (
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
     const relativePath = filePath.substring(sourcePath.length)
     let targetFilePath = path.join(targetPath, folderName, relativePath)
+
     // 若不以文件夹进行分组，则需应用业务名称为文件名
-    if (folderName === '') {
+    if (renameFile === true) {
       targetFilePath = replaceMatchedString(
         targetFilePath,
         path.basename(targetFilePath, fileExtname),
@@ -261,6 +263,7 @@ const clonePath = async (
 
       // console.log('pageContent: ', pageContent)
 
+      // 创建并写入文件
       try {
         fs.ensureFile(targetFilePath).then(() => {
           fs.writeFile(targetFilePath, pageContent)

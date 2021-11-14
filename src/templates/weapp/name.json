@@ -1,0 +1,6 @@
+{
+  "doc:docUrl": "https://developers.weixin.qq.com/miniprogram/dev/reference/configuration/page.html",
+  "enablePullDownRefresh": false,
+  "navigationBarTitleText": "[[nameLocale]]",
+  "usingComponents": {}
+}
