@@ -105,12 +105,18 @@ dd {
  */
 #page-main-index {
   header {
-    h1 {
-      cursor: pointer;
+    #branding {
+      display: flex;
+      align-items: center;
+
+      h1 {
+        cursor: pointer;
+      }
+      #app-version {
+        margin-left: 0.5rem;
+      }
     }
-    #app-version {
-      margin-left: 0.5rem;
-    }
+
 
     nav {
       margin-left: auto;
@@ -158,6 +164,11 @@ dd {
       background-color: $color-light;
       margin-top: 1.875rem;
       padding: 1.25rem;
+      position:fixed;
+      left:30px;
+      right:30px;
+      top:30px;
+      bottom:0;
     }
   }
 }
