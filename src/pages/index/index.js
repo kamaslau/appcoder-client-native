@@ -126,6 +126,17 @@ const App = {
       }
     },
 
+    // 打开程序数据目录
+    openAppDataFolder () {
+      console.log('openAppDataFolder: ', appPathDict.data)
+
+      try {
+        shell.openPath(event.currentTarget.href)
+      } catch (error) {
+        console.error('openWebPage error: ', error)
+      }
+    },
+
     /**
      * 选择路径
      */
