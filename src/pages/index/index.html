@@ -20,10 +20,12 @@
 
   <header id="header" class="mb-4 bg-dark text-white">
     <div class="container-fluid d-flex justify-content-between align-items-center py-2">
-      <h1 :title="`${appName} ${appVersion}版`" @click="openAppDataFolder">{{appName}}</h1>
-      <sup id="app-version" class="badge bg-light text-dark">{{appVersion}}</sup>
+      <div id="branding">
+        <h1 :title="`${appName} ${appVersion}版`" @click="openAppDataFolder">{{appName}}</h1>
+        <sup id="app-version" class="badge bg-light text-dark">{{appVersion}}</sup>
+      </div>
 
-      <nav class="nav nav-pills gap-2">
+      <nav class="nav nav-pills gap-2 d-none">
         <li class="nav-item">
           <a title="首页" class="nav-link active" href="index.html">
             <i class="fal fa-home"></i> 首页
@@ -31,8 +33,8 @@
         </li>
 
         <li class="nav-item">
-          <a title="官网" class="nav-link" href="http://www.appcoder.io?from=clientNative" target="_blank">
-            <i class="fal fa-external-link"></i> 官网
+          <a title="官网" class="nav-link" @click.prevent="openWebPage" href="http://www.appcoder.io?from=clientNative">
+            <i class="fal fa-external-link"></i> appcoder.io
           </a>
         </li>
       </nav>
@@ -49,7 +51,11 @@
 
           <div class="row justify-content-between align-items-start">
             <div class="col mt-0 form-group">
-              <label class="form-label">源/模板 *</label>
+              <label class="form-label">
+                源/模板 *
+                <button @click.stop="showTagTemplateInfo = !showTagTemplateInfo" type="button" class="btn btn-light"><i
+                    class="fal fa-info-square"></i> 模板标签</button>
+              </label>
 
               <div class="input-group">
                 <div class="input-group-text">
@@ -125,6 +131,7 @@
             </div>
         </fieldset>
 
+        <!-- 业务 -->
         <fieldset>
           <legend>业务</legend>
 
@@ -348,8 +355,14 @@
       </form>
 
       <!-- 模板文件可用内容标签说明 -->
-      <div id="template-tag-intro" ref="templateTagIntro">
-        <h2>模板标签</h2>
+      <div v-show="showTagTemplateInfo" id="template-tag-intro" ref="templateTagIntro">
+        <header class="d-flex justify-content-between">
+          <h2>模板标签</h2>
+
+          <span title="关闭" @click.stop="showTagTemplateInfo = false" class="btn btn-default"><i
+              class="fal fa-times"></i></span>
+        </header>
+
         <div class="alert alert-info">
           <p>模板标签是以”[[“和”]]“包裹的字符串，例如 <code>[[name]]</code>。</p>
           <p>在模板文件中，你可以使用以下模板标签，来标记需要进行生成的内容。</p>

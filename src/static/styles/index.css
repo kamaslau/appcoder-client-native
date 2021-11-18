@@ -90,10 +90,14 @@ dd {
 /**
  * 首页/工作台
  */
-#page-main-index header h1 {
+#page-main-index header #branding {
+  display: flex;
+  align-items: center;
+}
+#page-main-index header #branding h1 {
   cursor: pointer;
 }
-#page-main-index header #app-version {
+#page-main-index header #branding #app-version {
   margin-left: 0.5rem;
 }
 #page-main-index header nav {
@@ -131,6 +135,11 @@ dd {
   background-color: #f8f9fa;
   margin-top: 1.875rem;
   padding: 1.25rem;
+  position: fixed;
+  left: 30px;
+  right: 30px;
+  top: 30px;
+  bottom: 0;
 }
 
 /*# sourceMappingURL=index.css.map */

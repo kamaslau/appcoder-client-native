@@ -22,6 +22,8 @@ const App = {
       // 输入记录
       inputLog: null,
 
+      showTagTemplateInfo: false, // 显示模板标签说明？
+
       // 路径
       sourcePath: isDev
         ? appPathDict[process.env.SOURCE_DIR]
@@ -113,14 +115,14 @@ const App = {
       })
     },
 
-    // 打开程序数据目录
-    openAppDataFolder () {
-      console.log('openAppDataFolder: ', appPathDict.data)
+    // 打开网页
+    openWebPage (event) {
+      console.log('openWebPage: ', event.currentTarget.href)
 
       try {
-        shell.openPath(appPathDict.data)
+        shell.openPath(event.currentTarget.href)
       } catch (error) {
-        console.error('openAppDirectory error: ', error)
+        console.error('openWebPage error: ', error)
       }
     },
 
