@@ -89,7 +89,7 @@ const App = {
   },
 
   created() {
-    console.log('created: ')
+    // console.log('created: ')
 
     // 加载输入历史
     this.inputLog = historit.findMany()
@@ -99,13 +99,13 @@ const App = {
   },
 
   mounted() {
-    console.log('mounted: ')
+    // console.log('mounted: ')
   },
 
   methods: {
     // 添加演示性业务配置项
     mapDemoBizItem() {
-      console.log('mapDemoBizItem: ')
+      // console.log('mapDemoBizItem: ')
 
       this.bizs.push({
         ...this.bizItem,

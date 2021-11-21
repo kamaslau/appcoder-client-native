@@ -351,22 +351,22 @@
           </button>
 
           <button @click="doParse" title="解析数据表" type="button" class="btn btn-secondary">
-            <i class="fal fa-info"></i> 解析
+            <i class="fal fa-fw fa-info"></i> 解析
           </button>
 
           <button @click="doPack" :disabled="sourcePath.length === 0 || targetPath.length === 0" title="打包"
             type="button" class="btn btn-secondary">
-            <i class="fal fa-pallet"></i> 打包
+            <i class="fal fa-fw fa-pallet"></i> 打包
           </button>
 
           <button @click="doClone" :disabled="sourcePath.length === 0 || targetPath.length === 0" title="克隆/创建镜像副本"
             type="button" class="btn btn-secondary">
-            <i class="fal fa-code-branch"></i> 克隆
+            <i class="fal fa-fw fa-code-branch"></i> 克隆
           </button>
 
           <button @click="doGenerate" :disabled="bizs.length === 0 || bizs[0].name.length === 0" title="生成/创建定制化副本"
             type="button" class="btn btn-primary">
-            <i class="fal fa-code-merge"></i> 生成
+            <i class="fal fa-fw fa-code-merge"></i> 生成
           </button>
         </div>
       </form>
