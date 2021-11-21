@@ -129,7 +129,7 @@ Router.post('/', async (ctx) => {
 })
 
 /**
- * Update&Delete
+ * Update
  */
 Router.put('/:id', async (ctx) => {
   const apiCode = `${routeCode}4`
@@ -153,6 +153,36 @@ Router.put('/:id', async (ctx) => {
   // 组装响应体
   if (result === null) {
     body.message = '数据更新失败'
+    ctx.status = 500
+  } else {
+    body.data = result
+    ctx.status = 200
+  }
+  ctx.body = body
+})
+
+/**
+ * Delete
+ */
+Router.delete('/:id', async (ctx) => {
+  const apiCode = `${routeCode}5`
+  const body: BasicTypes.responseBody = {
+    apiCode,
+    inputBody: ctx.request.body
+  }
+
+  // 操作验证
+  // Basic.clientTypeCheck()
+  // const user: any = Basic.requireUser(ctx.state?.user?.user_id ?? null)
+  // const stuff: any = Basic.requireStuff(user.user_id)
+  // Basic.permissionCheck(stuff)
+
+  const basicModel = new BasicModel(modelName, ctx) // Init model
+  const result = await basicModel.delete(pkName, +ctx.params.id)
+
+  // 组装响应体
+  if (result === null) {
+    body.message = '数据删除失败'
     ctx.status = 500
   } else {
     body.data = result
