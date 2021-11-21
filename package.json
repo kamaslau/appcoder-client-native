@@ -1,7 +1,7 @@
 {
   "productName": "AppCoder",
   "name": "appcoder_client_native",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "低代码自动化应用开发平台",
   "author": {
     "name": "Liu, Yajie",
@@ -34,7 +34,7 @@
     "@tsconfig/node16": "latest",
     "@types/fs-extra": "latest",
     "cross-env": "latest",
-    "electron": "^15",
+    "electron": "^16",
     "electron-icon-maker": "^0.0.5",
     "jest": "latest",
     "jsdoc": "latest",
