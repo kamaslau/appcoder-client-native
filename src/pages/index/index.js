@@ -65,6 +65,9 @@ const App = {
         db: ''
       },
 
+      // 只读字段
+      readOnlyNames: ['time_created', 'time_updated', 'time_deleted'],
+
       // 模板标签
       templateTags: {
         module: [
@@ -203,7 +206,7 @@ const App = {
       console.log('mapBizDefaults: ', this.bizs[index])
 
       this.bizs[index].table = this.bizs[index].name
-      this.bizs[index].pk = this.bizs[index].name + '_id'
+      // this.bizs[index].pk = this.bizs[index].name + '_id'
     },
 
     // 添加一组业务配置
@@ -390,6 +393,15 @@ const App = {
         '[[name]]' + seperator + breaker // 模板
 
       for (const item of items) {
+        // 跳过部分只读字段
+        if (
+          this.readOnlyNames.includes(item.COLUMN_NAME) ||
+          item.COLUMN_KEY === 'PRI'
+        ) {
+          console.log(`${item.COLUMN_NAME} is skipped`)
+          continue
+        }
+
         result += template.replaceAll('[[name]]', item.COLUMN_NAME)
       }
 
@@ -404,8 +416,6 @@ const App = {
 
       let result = ''
 
-      const readOnlyNames = ['createdAt', 'updatedAt', 'deletedAt'] // 只读字段
-
       const template =
         '<input class="form-control" name="[[name]]" placeholder="[[nameLocale]]" [[required]] />' +
         '\n' // 模板
@@ -413,7 +423,7 @@ const App = {
       for (const item of items) {
         // 跳过部分只读字段
         if (
-          readOnlyNames.includes(item.COLUMN_NAME) ||
+          this.readOnlyNames.includes(item.COLUMN_NAME) ||
           item.COLUMN_KEY === 'PRI'
         ) {
           console.log(`${item.COLUMN_NAME} is skipped`)

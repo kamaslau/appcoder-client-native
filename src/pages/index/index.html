@@ -264,6 +264,12 @@
               <!-- 解析出的内容 -->
               <div v-if="parsedTableContent.length === 0" class="row">
                 <div v-for="content in parsedTableContent[item.name]" class="col">
+                  <div>
+                    <button @click="doCopy(content)" title="复制内容" type="button" class="btn btn-light">
+                      <i class="fal fa-copy"></i>
+                    </button>
+                  </div>
+
                   <pre>{{ content}}</pre>
                 </div>
               </div>
