@@ -56,6 +56,7 @@ const App = {
       api: {
         url: process.env.API_URL ?? ''
       },
+      parsedTableContent: [],
 
       // 数据库
       canParseTable: true, // 是否允许解析数据表结构
@@ -113,28 +114,6 @@ const App = {
         parseTable: true,
         table: 'user'
       })
-    },
-
-    // 打开网页
-    openWebPage(event) {
-      console.log('openWebPage: ', event.currentTarget.href)
-
-      try {
-        shell.openPath(event.currentTarget.href)
-      } catch (error) {
-        console.error('openWebPage error: ', error)
-      }
-    },
-
-    // 打开程序数据目录
-    openAppDataFolder() {
-      console.log('openAppDataFolder: ', appPathDict.data)
-
-      try {
-        shell.openPath(event.currentTarget.href)
-      } catch (error) {
-        console.error('openWebPage error: ', error)
-      }
     },
 
     /**
@@ -252,6 +231,43 @@ const App = {
     },
 
     /**
+     * 解析
+     *
+     * 解析数据表内容
+     */
+    async doParse() {
+      // console.log('doParse: ', this.bizs)
+
+      this.parsedTableContent = []
+
+      // 遍历业务配置项，生成相应页面，并装载到以业务名称为名的文件夹中
+      for (const item of this.bizs) {
+        // 解析数据表以获取字段信息
+        const columnsInfo = (await this.parseTable(item.name)) ?? []
+        if (columnsInfo === null) return window.alert('解析错误')
+
+        // 补充字段名称本地化信息
+        for (const column of columnsInfo) {
+          column.COLUMN_NAME_LOCALE =
+            column.COLUMN_COMMENT.length > 0
+              ? this.parseNameLocaleFromComment(column.COLUMN_COMMENT)
+              : ''
+        }
+
+        // 生成内容字符串
+        const content = {
+          contentCSV: this.composeCSV(columnsInfo, '\n') ?? '',
+          contentForm: this.composeForm(columnsInfo) ?? '',
+          contentList: this.composeList(columnsInfo) ?? '',
+          contentTable: this.composeTable(columnsInfo) ?? ''
+        }
+        console.log(content)
+
+        this.parsedTableContent[item.name] = content
+      }
+    },
+
+    /**
      * 打包
      *
      * 直接创建压缩包到目标路径，不处理文件
@@ -309,6 +325,7 @@ const App = {
           }
 
           // 生成字段内容字符串
+          item.contentCSV = this.composeCSV(columnsInfo) ?? ''
           item.contentForm = this.composeForm(columnsInfo) ?? ''
           item.contentList = this.composeList(columnsInfo) ?? ''
           item.contentTable = this.composeTable(columnsInfo) ?? ''
@@ -322,7 +339,8 @@ const App = {
       }
 
       // 上提模板标签说明DOM到视野之内
-      this.$refs.templateTagIntro.scrollIntoView({ behavior: 'smooth' })
+      this.showTagTemplateInfo = true
+      // this.$refs.templateTagIntro.scrollIntoView({ behavior: 'smooth' })
     },
 
     /**
@@ -331,20 +349,22 @@ const App = {
      * @param {string} tableName 数据表名称
      */
     async parseTable(tableName) {
-      console.log('parseTable: ', tableName)
+      // console.log('parseTable: ', tableName)
 
       const apiURL = `${this.api.url}/${tableName}`
 
       let result = null
 
       try {
-        result = await fetch(apiURL).then((response) => {
-          console.log(response)
+        result = await fetch(apiURL).then(async (response) => {
+          const json = await response.json()
+          // console.log(json)
 
           if (response.status === 200) {
-            return response.json().data
+            return json.data
           } else {
-            window.alert(response.json().message)
+            console.error(json.message)
+            window.alert(json.message)
           }
         })
       } catch (error) {
@@ -352,13 +372,30 @@ const App = {
       }
 
       console.log(result)
-
       return result
     },
 
     // 从字段备注中解析字段名
     parseNameLocaleFromComment(COLUMN_COMMENT) {
       return COLUMN_COMMENT.substring(0, COLUMN_COMMENT.indexOf('；'))
+    },
+
+    // 组装CSV内容
+    composeCSV(items, breaker = ',', seperator = ':') {
+      console.log('composeCSV: ', items, seperator, breaker)
+
+      let result = ''
+
+      const template =
+        '[[name]]' + seperator + breaker // 模板
+
+      for (const item of items) {
+        result += template.replaceAll('[[name]]', item.COLUMN_NAME)
+      }
+
+      console.log(result)
+
+      return result
     },
 
     // 组装表单型内容
@@ -369,9 +406,9 @@ const App = {
 
       const readOnlyNames = ['createdAt', 'updatedAt', 'deletedAt'] // 只读字段
 
-      const formTemplate =
+      const template =
         '<input class="form-control" name="[[name]]" placeholder="[[nameLocale]]" [[required]] />' +
-        '\r\n' // 表单模板
+        '\n' // 模板
 
       for (const item of items) {
         // 跳过部分只读字段
@@ -384,13 +421,13 @@ const App = {
         }
 
         result +=
-          formTemplate
+          template
             .replaceAll('[[name]]', item.COLUMN_NAME)
             .replaceAll(
               '[[required]]',
               item.IS_NULLABLE === 'YES' ? 'required' : ''
             )
-            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\n'
       }
 
       console.log(result)
@@ -404,15 +441,15 @@ const App = {
 
       let result = ''
 
-      const formTemplate =
+      const template =
         '<li title="[[nameLocale]]([[name]])">[[nameLocale]]: {{ [[name]] }}</li>' +
-        '\r\n' // 列表模板
+        '\n' // 模板
 
       for (const item of items) {
         result +=
-          formTemplate
+          template
             .replaceAll('[[name]]', item.COLUMN_NAME)
-            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\n'
       }
 
       console.log(result)
@@ -426,21 +463,21 @@ const App = {
 
       let result = ''
 
-      const formTemplate =
+      const template =
         '<tr title="[[nameLocale]]([[name]])">' +
-        '\r\n' +
+        '\n' +
         '  <td>[[nameLocale]]</td>' +
-        '\r\n' +
+        '\n' +
         '  <td>{{ [[name]] }}</td>' +
-        '\r\n' +
+        '\n' +
         '</tr>' +
-        '\r\n' // 表格模板
+        '\n' // 模板
 
       for (const item of items) {
         result +=
-          formTemplate
+          template
             .replaceAll('[[name]]', item.COLUMN_NAME)
-            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\r\n'
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\n'
       }
 
       console.log(result)
@@ -480,6 +517,17 @@ const Header = {
         shell.openPath(appPathDict.data)
       } catch (error) {
         console.error('openAppDirectory error: ', error)
+      }
+    },
+
+    // 打开网页
+    openWebPage(event) {
+      console.log('openWebPage: ', event.currentTarget.href)
+
+      try {
+        shell.openPath(event.currentTarget.href)
+      } catch (error) {
+        console.error('openWebPage error: ', error)
       }
     },
 
