@@ -17,7 +17,7 @@ window.onload = () => {
  * Vue 单页应用
  */
 const App = {
-  data() {
+  data () {
     return {
       // 输入记录
       inputLog: null,
@@ -88,7 +88,7 @@ const App = {
     }
   },
 
-  created() {
+  created () {
     // console.log('created: ')
 
     // 加载输入历史
@@ -98,13 +98,13 @@ const App = {
     isDev && this.mapDemoBizItem()
   },
 
-  mounted() {
+  mounted () {
     // console.log('mounted: ')
   },
 
   methods: {
     // 添加演示性业务配置项
-    mapDemoBizItem() {
+    mapDemoBizItem () {
       // console.log('mapDemoBizItem: ')
 
       this.bizs.push({
@@ -122,7 +122,7 @@ const App = {
     /**
      * 选择路径
      */
-    async pickPath() {
+    async pickPath () {
       console.log('pickPath: ')
 
       let path = null
@@ -152,14 +152,14 @@ const App = {
       return path
     },
 
-    changeInput(dataName, value) {
+    changeInput (dataName, value) {
       console.log('changeInput: ', dataName, value)
 
       this[dataName] = value
     },
 
     // 选择源路径
-    async pickSource() {
+    async pickSource () {
       console.log('pickSource: ')
 
       this.sourcePath = (await this.pickPath()) ?? this.sourcePath
@@ -168,7 +168,7 @@ const App = {
     },
 
     // 选择目标路径
-    async pickTarget() {
+    async pickTarget () {
       console.log('pickTarget: ')
 
       this.targetPath = (await this.pickPath()) ?? this.targetPath
@@ -177,13 +177,13 @@ const App = {
     },
 
     // 移除输入历史项
-    removeInputHistoryItem(key, index) {
+    removeInputHistoryItem (key, index) {
       this.inputLog[key].splice(index, 1)
       historit.update(key, this.inputLog[key])
     },
 
     // 添加一组业务配置
-    addBiz() {
+    addBiz () {
       // 延续部分配置；最近一个业务项，或者默认项
       const referenceItem =
         this.bizs.length > 0 ? this.bizs[this.bizs.length - 1] : this.bizConfigGlobal
@@ -195,14 +195,14 @@ const App = {
     },
 
     // 转换业务编码为大写
-    upperBizCode(index) {
+    upperBizCode (index) {
       console.log('upperBizCode: ', this.bizs[index])
 
       this.bizs[index].code = this.bizs[index].code.toUpperCase()
     },
 
     // 填写默认值
-    mapBizDefaults(index) {
+    mapBizDefaults (index) {
       console.log('mapBizDefaults: ', this.bizs[index])
 
       this.bizs[index].table = this.bizs[index].name
@@ -210,12 +210,12 @@ const App = {
     },
 
     // 添加一组业务配置
-    removeBiz(index) {
+    removeBiz (index) {
       this.bizs.splice(index, 1)
     },
 
     // 验证路径格式
-    verifyPaths(sourcePath, targetPath, allowSelf = true) {
+    verifyPaths (sourcePath, targetPath, allowSelf = true) {
       let errorMessage = ''
 
       if (!sourcePath) errorMessage += '需指定源路径；'
@@ -238,7 +238,7 @@ const App = {
      *
      * 解析数据表内容
      */
-    async doParse() {
+    async doParse () {
       // console.log('doParse: ', this.bizs)
 
       this.parsedTableContent = []
@@ -275,7 +275,7 @@ const App = {
      *
      * 直接创建压缩包到目标路径，不处理文件
      */
-    async doPack() {
+    async doPack () {
       console.log('doPack: ', this.sourcePath, this.targetPath)
 
       const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath)
@@ -289,7 +289,7 @@ const App = {
      *
      * 直接创建文件拷贝到目标路径，不处理文件/创建包装文件夹
      */
-    async doClone() {
+    async doClone () {
       console.log('doClone: ', this.sourcePath, this.targetPath)
 
       const errorMessage = this.verifyPaths(
@@ -307,7 +307,7 @@ const App = {
      *
      * 使用源文件作为模板来生成新文件
      */
-    async doGenerate() {
+    async doGenerate () {
       console.log('doClone: ', this.sourcePath, this.targetPath)
 
       const errorMessage = this.verifyPaths(this.sourcePath, this.targetPath)
@@ -351,7 +351,7 @@ const App = {
      *
      * @param {string} tableName 数据表名称
      */
-    async parseTable(tableName) {
+    async parseTable (tableName) {
       // console.log('parseTable: ', tableName)
 
       const apiURL = `${this.api.url}/${tableName}`
@@ -379,12 +379,12 @@ const App = {
     },
 
     // 从字段备注中解析字段名
-    parseNameLocaleFromComment(COLUMN_COMMENT) {
+    parseNameLocaleFromComment (COLUMN_COMMENT) {
       return COLUMN_COMMENT.substring(0, COLUMN_COMMENT.indexOf('；'))
     },
 
     // 组装CSV内容
-    composeCSV(items, breaker = ',', seperator = ':') {
+    composeCSV (items, breaker = ',', seperator = ':') {
       console.log('composeCSV: ', items, seperator, breaker)
 
       let result = ''
@@ -411,7 +411,7 @@ const App = {
     },
 
     // 组装表单型内容
-    composeForm(items) {
+    composeForm (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
@@ -446,7 +446,7 @@ const App = {
     },
 
     // 组装列表型内容
-    composeList(items) {
+    composeList (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
@@ -468,7 +468,7 @@ const App = {
     },
 
     // 组装表格型内容
-    composeTable(items) {
+    composeTable (items) {
       // console.log('composeContent: ', items)
 
       let result = ''
@@ -496,7 +496,7 @@ const App = {
     },
 
     // 拷贝文本内容到操作系统剪贴板
-    doCopy(content) {
+    doCopy (content) {
       copyText(content)
     }
   }
@@ -507,20 +507,20 @@ Vue.createApp(App).mount('#app')
  * 页首
  */
 const Header = {
-  data() {
+  data () {
     return {
       appName: process.env.APP_NAME,
       appVersion: process.env.VERSION
     }
   },
 
-  created() {
+  created () {
     this.renderMeta()
   },
 
   methods: {
     // 打开程序数据目录
-    openAppDataFolder() {
+    openAppDataFolder () {
       console.log('openAppDataFolder: ', appPathDict.data)
 
       try {
@@ -531,7 +531,7 @@ const Header = {
     },
 
     // 打开网页
-    openWebPage(event) {
+    openWebPage (event) {
       console.log('openWebPage: ', event.currentTarget.href)
 
       try {
@@ -542,7 +542,7 @@ const Header = {
     },
 
     // 渲染页面元信息
-    renderMeta() {
+    renderMeta () {
       document.title = this.appName
     }
   }

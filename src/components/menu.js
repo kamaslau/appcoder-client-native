@@ -33,9 +33,10 @@ const template = [
     submenu: [
       {
         label: '关于',
+        accelerator: 'F1',
         click: () => {
           openAboutWindow({
-            // icon_path: path.join(appDir, '/static/images/logo.png'),
+            icon_path: path.join(appDir, '/assets/images/logo.png'),
             use_version_info: false
           })
         }
@@ -62,13 +63,13 @@ const template = [
       { label: '关闭', role: 'close' },
       { label: '全屏/还原', role: 'togglefullscreen' },
       { type: 'separator' },
-      { label: '刷新', role: 'reload', accelerator: 'CmdOrCtrl+R' },
-      { label: '强制刷新（忽略缓存）', role: 'forcereload', accelerator: 'CmdOrCtrl+Shift+R' },
+      { label: '刷新', role: 'reload' },
+      { label: '强制刷新（忽略缓存）', role: 'forcereload' },
       { type: 'separator' },
       {
         role: 'toggleDevTools',
         label: '调试面板',
-        accelerator: process.platform === 'darwin' ? 'Option+Cmd+I' : 'Ctrl+Shift+I'
+        accelerator: 'F12'
       }
     ]
   }
