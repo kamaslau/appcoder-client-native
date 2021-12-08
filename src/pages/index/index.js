@@ -80,9 +80,13 @@ const App = {
         names: [
           { literal: '[[name]]', label: '字段名称' },
           { literal: '[[nameLocale]]', label: '字段本地化名称' },
-          { literal: '[[namesForm]]', label: '表单型字段内容体' },
-          { literal: '[[namesList]]', label: '列表型字段内容体' },
-          { literal: '[[namesTable]]', label: '表格型字段内容体' }
+
+          { literal: '[[htmlForm]]', label: 'HTML表单型内容体' },
+          { literal: '[[htmlList]]', label: '列表型内容体' },
+          { literal: '[[htmlTable]]', label: '表格型内容体' },
+
+          { literal: '[[weappForm]]', label: '小程序表单型内容体' },
+          { literal: '[[weappList]]', label: '小程序列表型内容体' }
         ]
       }
     }
@@ -233,6 +237,25 @@ const App = {
       return errorMessage
     },
 
+    // 根据字段信息生成内容
+    composeContents (columnsInfo) {
+      console.log('composeContents: ', columnsInfo)
+
+      const result = {
+        CSV: this.composeCSV(columnsInfo, '\n') ?? '',
+
+        htmlForm: this.composeForm(columnsInfo) ?? '',
+        htmlList: this.composeList(columnsInfo) ?? '',
+        htmlTable: this.composeTable(columnsInfo) ?? '',
+
+        weappForm: this.composeWeappForm(columnsInfo) ?? '',
+        weappList: this.composeWeappList(columnsInfo) ?? ''
+      }
+      console.log('result: ', result)
+
+      return result
+    },
+
     /**
      * 解析
      *
@@ -258,14 +281,7 @@ const App = {
         }
 
         // 生成内容字符串
-        const content = {
-          contentCSV: this.composeCSV(columnsInfo, '\n') ?? '',
-          contentForm: this.composeForm(columnsInfo) ?? '',
-          contentList: this.composeList(columnsInfo) ?? '',
-          contentTable: this.composeTable(columnsInfo) ?? ''
-        }
-        console.log(content)
-
+        const content = this.composeContents(columnsInfo)
         this.parsedTableContent[item.name] = content
       }
     },
@@ -328,10 +344,8 @@ const App = {
           }
 
           // 生成字段内容字符串
-          item.contentCSV = this.composeCSV(columnsInfo) ?? ''
-          item.contentForm = this.composeForm(columnsInfo) ?? ''
-          item.contentList = this.composeList(columnsInfo) ?? ''
-          item.contentTable = this.composeTable(columnsInfo) ?? ''
+          const content = this.composeContents(columnsInfo)
+          Object.assign(item, content)
         }
 
         // console.log("biz item: ", item);
@@ -372,6 +386,7 @@ const App = {
         })
       } catch (error) {
         console.error(error)
+        window.alert(error.message)
       }
 
       console.log(result)
@@ -445,6 +460,47 @@ const App = {
       return result
     },
 
+    // 组装微信小程序表单型内容
+    composeWeappForm (items) {
+      // console.log('composeWeappForm: ', items)
+
+      let result = ''
+
+      const template =
+      `
+      <view class="form-group row">
+        <view class="label col-3">[[nameLocale]]</view>
+        <view class="input-group col-9">
+          <input name="[[name]]" value="{{ item.[[name]] }}" confirm-type="next" focus="{{ item.[[name]].length === 0 }}"
+            class="form-control" [[required]] />
+        </view>
+      </view>` // 模板
+
+      for (const item of items) {
+        // 跳过部分只读字段
+        if (
+          this.readOnlyNames.includes(item.COLUMN_NAME) ||
+          item.COLUMN_KEY === 'PRI'
+        ) {
+          console.log(`${item.COLUMN_NAME} is skipped`)
+          continue
+        }
+
+        result +=
+          template
+            .replaceAll('[[name]]', item.COLUMN_NAME)
+            .replaceAll(
+              '[[required]]',
+              item.IS_NULLABLE === 'YES' ? 'required' : ''
+            )
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\n'
+      }
+
+      console.log(result)
+
+      return result
+    },
+
     // 组装列表型内容
     composeList (items) {
       // console.log('composeContent: ', items)
@@ -454,6 +510,30 @@ const App = {
       const template =
         '<li title="[[nameLocale]]([[name]])">[[nameLocale]]: {{ [[name]] }}</li>' +
         '\n' // 模板
+
+      for (const item of items) {
+        result +=
+          template
+            .replaceAll('[[name]]', item.COLUMN_NAME)
+            .replaceAll('[[nameLocale]]', item.COLUMN_NAME_LOCALE) + '\n'
+      }
+
+      console.log(result)
+
+      return result
+    },
+
+    // 组装小程序列表型内容
+    composeWeappList (items) {
+      // console.log('composeWeappList: ', items)
+
+      let result = ''
+
+      const template =
+      `
+      <view>
+        <text>[[nameLocale]] {{ item.[[name]] }}</text>
+      </view>` // 模板
 
       for (const item of items) {
         result +=

@@ -6,4 +6,9 @@
   <view title="[[nameLocale]]" class="h2">[[nameLocale]]</view>
 
   {{ items }}
+
+  [[weappList]]
+
+  [[weappForm]]
+
 </view>

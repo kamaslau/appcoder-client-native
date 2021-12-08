@@ -239,16 +239,20 @@ const clonePath = async (
 
       // 处理特定后缀名的文件
       const supportedExtnames = [
-        '.html',
-        '.js',
-        '.json',
-        '.php',
-        '.ts',
-        '.vue'
-      ]
+        'html',
+        'js',
+        'json',
+        'php',
+        'ts',
+        'text',
+        'vue',
+        'wxml',
+        'wxss'
+      ].map(item => '.'+item)
       if (supportedExtnames.includes(fileExtname)) {
         // 替换模板中的变量标识（[[变量名]]）为实际值
         Object.keys(payload).forEach((name) => {
+          console.log('try mapping ', name)
           if (!payload[name]) return
 
           pageContent = replaceMatchedString(
