@@ -10,7 +10,11 @@ window.onload = () => {
   )
 
   // 通知主进程已完成HTML、CSS加载
-  if (ipcRenderer) ipcRenderer.send('pageOnload', { page: 'index' })
+  if (ipcRenderer) ipcRenderer.send('pageOnload', { page: 'index/index' })
+}
+
+window.onerror = (error, url, line) => {
+  if (ipcRenderer) ipcRenderer.send('pageOnError', { page: 'index/index', error })
 }
 
 /**

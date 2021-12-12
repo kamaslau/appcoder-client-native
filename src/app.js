@@ -156,6 +156,11 @@ app.whenReady().then(() => {
     }
   })
 
+  // 接收页面错误
+  ipcMain.on('pageOnError', (event, data) => {
+    console.error(`${data.page} error: `, data.error)
+  })
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
