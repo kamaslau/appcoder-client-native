@@ -39,7 +39,7 @@
     "jest": "latest",
     "jsdoc": "latest",
     "nodemon": "latest",
-    "sass": "^1.43",
+    "sass": "^1.45",
     "ts-standard": "latest"
   },
   "dependencies": {
