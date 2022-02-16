@@ -68,7 +68,7 @@ const createWindow = () => {
 
   main_window = new BrowserWindow({
     ...defaultWindow,
-    show: false, // 首次加载时，默认不显示窗口，待渲染完成（ready-to-show 事件被触发）后显示
+    // show: false, // 首次加载时，默认不显示窗口，待渲染完成（ready-to-show 事件被触发）后显示
 
     width: window_state.width,
     height: window_state.height,
