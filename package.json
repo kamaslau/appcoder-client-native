@@ -23,7 +23,6 @@
     "package": "electron-forge package",
     "prepare:icon": "./node_modules/.bin/electron-icon-maker --input=/Users/kamaslau/github/appcoder_client_native/src/assets/images/logo.png --output=./src/assets/images/logos",
     "start": "electron-forge start",
-    "doc": "jsdoc src/services/*.js -d docs",
     "test": "jest"
   },
   "devDependencies": {
@@ -36,7 +35,6 @@
     "electron": "^16.0.10",
     "electron-icon-maker": "^0.0.5",
     "jest": "latest",
-    "jsdoc": "latest",
     "sass": "^1.49.9"
   },
   "dependencies": {
