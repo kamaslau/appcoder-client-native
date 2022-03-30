@@ -2,7 +2,7 @@
   "env": {
     "NODE_ENV": "development"
   },
-  "exec": "npx sass ./src/assets/styles/index.scss ./src/static/styles/index.css && npx electron-forge start",
+  "exec": "npx sass ./src/assets/styles/index.scss ./src/static/styles/index.css && electron .",
   "ext": "html,js,json,ts,scss",
   "watch": ["src"]
 }

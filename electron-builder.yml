@@ -1,0 +1,35 @@
+appId: com.kamaslau.appcoder-client-desktop
+
+artifactName: "${productName}_${version}_${os}_${arch}_installer.${ext}"
+
+directories:
+  output: releases
+
+files:
+  - "build_resources/logo.*"
+  - "src/**/*"
+  - "package.json"
+
+linux:
+  icon: "build_resources/logo.png"
+  category: Development
+  target:
+    - target: deb
+      arch:
+        - x64
+        - arm64
+
+mac:
+  icon: "build_resources/icons/mac/icon.icns"
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - x64
+
+win:
+  icon: "build_resources/icons/win/icon.ico"
+  target:
+    - target: nsis
+      arch:
+        - x64

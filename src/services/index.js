@@ -248,7 +248,7 @@ const clonePath = async (
         'vue',
         'wxml',
         'wxss'
-      ].map(item => '.'+item)
+      ].map(item => '.' + item)
       if (supportedExtnames.includes(fileExtname)) {
         // 替换模板中的变量标识（[[变量名]]）为实际值
         Object.keys(payload).forEach((name) => {

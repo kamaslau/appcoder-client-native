@@ -1,9 +1,6 @@
-// https://github.com/electron/windows-installer#handling-squirrel-events
-if (require('electron-squirrel-startup')) return
-
 /**
  * 环境配置
- * 
+ *
  * 载入，并应用env.json、package.json的相关配置项；由于env.json最后加载，所以可在其中对前序内容（若有重复项）进行覆盖。
  */
 const mapEnv = (target = process.env) => {
@@ -19,9 +16,9 @@ const mapEnv = (target = process.env) => {
       NODE_ENV: process.env.NODE_ENV ?? 'production',
       APP_NAME: _PACKAGE.productName,
       VERSION: _PACKAGE.version,
-      DESCRIPTION: _PACKAGE.description,
+      DESCRIPTION: _PACKAGE.description
     },
-    _ENV,
+    _ENV
   )
 
   // console.log('process.env: ', process.env)
@@ -35,17 +32,21 @@ const {
   ipcMain,
   webContents
 } = require('electron')
-
 const remoteMain = require('@electron/remote/main')
 const fs = require('fs-extra')
 const path = require('path')
 const windowStateKeeper = require('electron-window-state') // 记录并恢复窗口状态，如位置、尺寸等
 
+// 当前文件系统中的文件路径、页面文件路径字典
 const appPath = path.join(__dirname)
-const pageRoot = path.join(appPath, 'pages/')
+const pageRoot = path.join(appPath, 'pages')
+const pagePathDict = {
+  entry: path.join(pageRoot, 'index', 'index.html'), // 入口页面
+  error: path.join(pageRoot, 'error', '500.html') // 错误页面
+}
 
 let launched = false // 是否已创建过窗口
-let main_window // 主窗口
+let mainWindow // 主窗口
 
 // 创建窗口
 const defaultWindow = {
@@ -60,13 +61,14 @@ const defaultWindow = {
   },
   icon: path.join(appPath, 'app/static/images/logo.png')
 }
+
 const createWindow = () => {
   const window_state = windowStateKeeper({
     defaultWidth: undefined,
     defaultHeight: undefined
   })
 
-  main_window = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     ...defaultWindow,
     // show: false, // 首次加载时，默认不显示窗口，待渲染完成（ready-to-show 事件被触发）后显示
 
@@ -77,21 +79,21 @@ const createWindow = () => {
     webPreferences: {
       devTools: true,
       nodeIntegration: true,
-      contextIsolation: false
-      // preload: path.join(__dirname, "preload.js"),
+      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js')
     }
   })
   remoteMain.initialize()
-  remoteMain.enable(main_window.webContents)
+  remoteMain.enable(mainWindow.webContents)
 
   // 开发模式
-  if (isDev) main_window.webContents.openDevTools() // 主动调起开发者工具
+  if (isDev) mainWindow.webContents.openDevTools() // 主动调起开发者工具
 
   // 载入主视图；优先尝试PWA模式，若失败则尝试WebView，若再失败则显示错误页面。
   let loadLog = '' // 加载时错误日志
   const loadPWA = () => {
     try {
-      main_window.loadFile(pageRoot + 'index/index.html')
+      mainWindow.loadFile(pagePathDict.entry)
       // throw new Error("If PWA fails...");
     } catch (error) {
       loadLog =
@@ -103,7 +105,7 @@ const createWindow = () => {
   }
   const loadWebView = () => {
     try {
-      main_window.loadURL('https://www.appcoder.io')
+      mainWindow.loadURL('https://www.appcoder.io')
       // throw new Error("If WebView also fails...");
     } catch (error) {
       loadLog +=
@@ -113,7 +115,7 @@ const createWindow = () => {
   }
   const load500 = () => {
     try {
-      main_loadFile(pageRoot + 'error/500.html')
+      mainWindow.loadFile(pagePathDict.error)
       // throw new Error("If catch-all also fails...");
     } catch (error) {
       loadLog += 'Catch-all also fails, this is it.'
@@ -129,15 +131,17 @@ const createWindow = () => {
 
   // 首次启动时，最大化窗口；否则重置窗口为上次关闭时的尺寸、位置
   if (!launched) {
-    main_window.maximize()
+    mainWindow.maximize()
     launched = true
   }
-  window_state.manage(main_window)
+  window_state.manage(mainWindow)
 }
 
 app.on('ready', () => {
   // console.log('Electron is almost ready at ', new Date().toLocaleString())
-  const appMenu = require(appPath + '/components/menu.js') // 菜单栏构建方法
+  const appMenu = require(
+    path.join(appPath, 'components', 'menu.js')
+  ) // 菜单栏构建方法
   appMenu() // 状态栏菜单
 })
 app.whenReady().then(() => {
@@ -152,7 +156,7 @@ app.whenReady().then(() => {
     // 首页完成渲染后，显示窗口
     if (data.page === 'index') {
       console.log('index page onload')
-      main_window.show()
+      mainWindow.show()
     }
   })
 
@@ -168,7 +172,7 @@ app.whenReady().then(() => {
   })
 
   // 获取主窗口页面内容
-  const wc = main_window.webContents
+  const wc = mainWindow.webContents
   // console.log("webContents: ", wc);
 
   // 拦截创建新窗口的行为

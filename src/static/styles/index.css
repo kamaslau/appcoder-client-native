@@ -5,7 +5,7 @@
  * 重要！绝对不要引入任何未授权的非开源字体，包括但不限于SanFrancisco、NewYork等苹果字体，存在合规风险！
  */
 @import url("../../../node_modules/bootstrap/dist/css/bootstrap.min.css");
-@import url("../../../libs/fontawesome/5.12.1/css/all.min.css");
+@import url("../../libs/fontawesome/5.12.1/css/all.min.css");
 @viewport {
   width: device-width;
 }
@@ -22,7 +22,7 @@ html {
 body {
   font-size: 1rem;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  color: #212529;
+  color: #333;
   background-color: #fff;
 }
 

@@ -36,7 +36,7 @@ const template = [
         accelerator: 'F1',
         click: () => {
           openAboutWindow({
-            icon_path: path.join(appDir, '/assets/images/logo.png'),
+            icon_path: path.join(appDir, 'static', 'images', 'logo.png'),
             use_version_info: false
           })
         }

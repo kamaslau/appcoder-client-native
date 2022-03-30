@@ -1,7 +1,7 @@
 {
   "productName": "AppCoder",
-  "name": "appcoder_client_native",
-  "version": "0.0.25",
+  "name": "appcoder-client-desktop",
+  "version": "0.0.26",
   "description": "低代码自动化应用开发平台",
   "author": {
     "name": "Liu, Yajie",
@@ -14,71 +14,33 @@
   },
   "main": "src/app.js",
   "scripts": {
-    "dev": "cross-env nodemon",
+    "build": "electron-builder --config && open ./releases",
+    "build:all": "electron-builder --config -mwl",
+    "build:mac": "electron-builder --config --mac",
+    "build:win": "electron-builder --config --win",
+    "build:linux": "electron-builder --config --linux",
     "format": "cross-env ts-standard --fix 'src/**/*.*'",
-    "make": "electron-forge make",
-    "make-linux": "electron-forge make --platform linux",
-    "make-mac": "electron-forge make --platform darwin",
-    "make-win": "electron-forge make --platform win32",
-    "package": "electron-forge package",
-    "prepare:icon": "./node_modules/.bin/electron-icon-maker --input=/Users/kamaslau/github/appcoder_client_native/src/assets/images/logo.png --output=./src/assets/images/logos",
-    "start": "electron-forge start",
-    "test": "jest"
+    "prepare:icon": "electron-icon-builder --input=./build_resources/logo.png --output=./build_resources",
+    "start": "electron src/app.js",
+    "start:dev": "cross-env nodemon"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.63",
-    "@electron-forge/maker-dmg": "^6.0.0-beta.63",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
     "@tsconfig/node16": "latest",
     "@types/fs-extra": "latest",
-    "electron": "^16.0.10",
-    "electron-icon-maker": "^0.0.5",
-    "jest": "latest",
+    "electron": "latest",
+    "electron-builder": "^23.0.3",
+    "electron-icon-builder": "^2.0.1",
     "sass": "^1.49.9"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.5",
+    "@electron/remote": "^2.0.8",
     "about-window": "^1.15.2",
     "bootstrap": "^5.1.3",
-    "electron-squirrel-startup": "^1.0.0",
     "electron-window-state": "^5.0.3",
     "fs-extra": "^10.0.1",
-    "jszip": "^3.7.1",
+    "jszip": "^3.8.0",
     "node-fetch": "^2.6.7",
     "vue": "^3.2.31"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "./src/assets/images/logo",
-        "appBundleId": "com.kamaslau.AppCoder",
-        "appCategoryType": "public.app-category.developer-tools",
-        "appCopyright": "Kamas Lau<kamaslau@outlook.com>",
-        "asar": true,
-        "overwrite": true
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "platforms": [
-            "win32"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-dmg",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "platforms": [
-            "linux"
-          ]
-        }
-      ]
-    }
   },
   "repository": {
     "type": "git",
