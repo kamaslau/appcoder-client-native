@@ -106,7 +106,7 @@ const processPath = async (
   // console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
 
   // 获取当前路径下的所有文件
-  const paths = await listFilesInDir(rootPath)
+  const paths = await listFilesInDir(rootPath) ?? []
 
   if (paths.length === 0) return
 

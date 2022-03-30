@@ -75,7 +75,7 @@
                 <p>例如 <span id="sample-source-path">{{ sourcePathSample }}</span></p>
               </div>
 
-              <div v-if="inputLog?.path" class="input-history">
+              <div v-if="inputLog.path?.length > 0" class="input-history">
                 <ul class="list-group">
                   <li v-for="(item, index) in inputLog?.path.filter(item => item !== targetPath)" :key="index"
                     @click="changeInput('sourcePath', item)" class="list-group-item">
@@ -115,7 +115,7 @@
                 <p>例如 <span id="target-source-path">{{ targetPathSample }}</span></p>
               </div>
 
-              <div v-if="inputLog?.path" class="input-history">
+              <div v-if="inputLog.path?.length > 0" class="input-history">
                 <ul class="list-group">
                   <li v-for="(item, index) in inputLog?.path.filter(item => item !== sourcePath)" :key="index"
                     class="list-group-item">
@@ -262,7 +262,7 @@
               </template>
 
               <!-- 解析出的内容 -->
-              <div v-if="parsedTableContent.length === 0" class="row">
+              <div v-if="parsedTableContent?.length === 0" class="row">
                 <div v-for="content in parsedTableContent[item.name]" class="col">
                   <div>
                     <button @click="doCopy(content)" title="复制内容" type="button" class="btn btn-light">
@@ -354,12 +354,12 @@
             <i class="fal fa-fw fa-info"></i> 解析
           </button>
 
-          <button @click="doPack" :disabled="sourcePath.length === 0 || targetPath.length === 0" title="打包"
+          <button @click="doPack" :disabled="sourcePath?.length === 0 || targetPath?.length === 0" title="打包"
             type="button" class="btn btn-secondary">
             <i class="fal fa-fw fa-pallet"></i> 打包
           </button>
 
-          <button @click="doClone" :disabled="sourcePath.length === 0 || targetPath.length === 0" title="克隆/创建镜像副本"
+          <button @click="doClone" :disabled="sourcePath?.length === 0 || targetPath?.length === 0" title="克隆/创建镜像副本"
             type="button" class="btn btn-secondary">
             <i class="fal fa-fw fa-code-branch"></i> 克隆
           </button>

@@ -1,4 +1,3 @@
-const Vue = require('vue')
 /**
  * 首页
  * ===
@@ -20,6 +19,7 @@ window.onerror = (error, url, line) => {
 /**
  * Vue 单页应用
  */
+const Vue = require('vue')
 const App = {
   data () {
     return {
@@ -31,12 +31,12 @@ const App = {
       // 路径
       sourcePath: isDev
         ? appPathDict[process.env.SOURCE_DIR]
-        : window.localStorage.getItem('recentSourcePath'),
+        : window.localStorage.getItem('recentSourcePath') ?? '',
       sourcePathSample: appPathDict[process.env.SOURCE_DIR],
       targetPath: isDev
         ? appPathDict[process.env.TARGET_DIR]
         : window.localStorage.getItem('recentTargetPath'),
-      targetPathSample: appPathDict[process.env.TARGET_DIR],
+      targetPathSample: appPathDict[process.env.TARGET_DIR] ?? '',
 
       // 业务
       bizConfigGlobal: {
@@ -97,17 +97,13 @@ const App = {
   },
 
   created () {
-    // console.log('created: ')
+    console.log('created: ')
 
     // 加载输入历史
     this.inputLog = historit.findMany()
 
     // DEV only
     isDev && this.mapDemoBizItem()
-  },
-
-  mounted () {
-    // console.log('mounted: ')
   },
 
   methods: {
