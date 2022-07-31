@@ -39,7 +39,7 @@
     "electron-window-state": "^5.0.3",
     "fs-extra": "^10.0.1",
     "jszip": "^3.9.1",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.2.10",
     "vue": "^3.2.31"
   },
   "repository": {
