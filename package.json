@@ -1,10 +1,10 @@
 {
   "productName": "AppCoder",
   "name": "appcoder-client-desktop",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "低代码自动化应用开发平台",
   "author": {
-    "name": "Liu, Yajie",
+    "name": "Lau, Kamas",
     "email": "kamaslau@dingtalk.com"
   },
   "license": "UNLICENSED",
@@ -44,10 +44,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kamaslau/appcoder_client_native.git"
+    "url": "git+https://github.com/kamaslau/appcoder-client-native.git"
   },
   "bugs": {
-    "url": "https://github.com/kamaslau/appcoder_client_native/issues"
+    "url": "https://github.com/kamaslau/appcoder-client-native/issues"
   },
-  "homepage": "https://github.com/kamaslau/appcoder_client_native#readme"
+  "homepage": "https://github.com/kamaslau/appcoder-client-native#readme"
 }

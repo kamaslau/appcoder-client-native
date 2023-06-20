@@ -40,7 +40,7 @@ const touchFile = (filePath) => {
   try {
     fs.ensureFileSync(filePath);
   } catch (error) {
-    console.error("touchConfig error: ", error);
+    console.error(error);
   }
 };
 
@@ -49,22 +49,19 @@ const touchFile = (filePath) => {
  *
  * @param {string} context 内容
  * @param {string} searchValue 占位内容
- * @param {string} replaceValue 目标值
+ * @param {null|string} replaceValue 目标值
  */
 const replaceMatchedString = (context, searchValue, replaceValue = null) => {
-  console.log("replaceMatchedString: ", context, searchValue, replaceValue);
+  // console.log("replaceMatchedString: ", context, searchValue, replaceValue);
 
-  let result = "";
-
+  let result = context;
   try {
-    result = !!replaceValue
-      ? context.replaceAll(searchValue, replaceValue)
-      : context;
+    !!replaceValue && (result = context.replaceAll(searchValue, replaceValue));
   } catch (error) {
     console.error(error);
   }
 
-  console.log("result: ", result);
+  // console.log("result: ", result);
   return result;
 };
 
@@ -93,10 +90,10 @@ const listFilesInDir = async (targetDir = null) => {
         (list) => list.map((item) => path.join(targetDir, item))
       );
   } catch (error) {
-    console.error("listFilesInDir error: ", error);
+    console.error(error);
   }
-  // console.log('result: ', result)
 
+  // console.log('result: ', result)
   return result;
 };
 
@@ -134,7 +131,7 @@ const processPath = async (
       }
     }
   } catch (error) {
-    console.error("processPath error: ", error);
+    console.error(error);
   }
 };
 
@@ -178,7 +175,7 @@ const packPath = async (sourcePath, targetPath) => {
   // 写入新文件到目标路径
   const targetFilePath = `${targetPath}/${path.basename(
     sourcePath
-  )}_clone_packed.zip`;
+  )}_cloned_packed.zip`;
 
   try {
     fs.ensureFile(targetFilePath)
@@ -297,7 +294,7 @@ const copyText = (content) => {
     clipboard.writeText(content);
     console.log("text copied: ", clipboard.readText());
   } catch (error) {
-    console.error("copyText error: ", error);
+    console.error(error);
   }
 };
 
