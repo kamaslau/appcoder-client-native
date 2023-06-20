@@ -51,17 +51,20 @@ const touchFile = (filePath) => {
  * @param {string} searchValue 占位内容
  * @param {string} replaceValue 目标值
  */
-const replaceMatchedString = (context, searchValue, replaceValue) => {
-  // console.log('replaceMatchedString: ', context, searchValue, replaceValue)
+const replaceMatchedString = (context, searchValue, replaceValue = null) => {
+  console.log("replaceMatchedString: ", context, searchValue, replaceValue);
 
   let result = "";
 
   try {
-    result = context.replaceAll(searchValue, replaceValue);
+    result = !!replaceValue
+      ? context.replaceAll(searchValue, replaceValue)
+      : context;
   } catch (error) {
     console.error(error);
   }
 
+  console.log("result: ", result);
   return result;
 };
 
@@ -103,7 +106,7 @@ const processPath = async (
   fileOp = async () => {},
   dirOp = async () => {}
 ) => {
-  // console.log('processPath: ', rootPath, typeof fileOp, typeof dirOp)
+  // console.log("processPath: ", rootPath, typeof fileOp, typeof dirOp);
 
   // 获取当前路径下的所有文件
   const paths = (await listFilesInDir(rootPath)) ?? [];
@@ -112,6 +115,8 @@ const processPath = async (
 
   try {
     for (const path of paths) {
+      // console.log('path: ', path)
+
       const pathState = fs.lstatSync(path);
 
       if (pathState.isDirectory()) {
@@ -199,12 +204,14 @@ const clonePath = async (
   folderName = "",
   payload = null
 ) => {
-  console.log(`clonePath: ${sourcePath} -> ${targetPath}`, payload);
+  // console.log(`clonePath: ${sourcePath} -> ${targetPath}`, payload);
 
   if (!sourcePath || !sourcePath) return;
 
   // 文件操作
   const fileOp = async (filePath) => {
+    // console.log("fileOp: ", filePath);
+
     const fileExtname = path.extname(filePath);
 
     // 将待克隆文件相对于目标目录的路径增量部分，作为目标路径的一部分，以保持文件目录结构
@@ -216,10 +223,10 @@ const clonePath = async (
       targetFilePath = replaceMatchedString(
         targetFilePath,
         path.basename(targetFilePath, fileExtname),
-        payload.name
+        payload?.name
       );
     }
-    console.log("targetFilePath: ", targetFilePath);
+    // console.log("targetFilePath: ", targetFilePath);
 
     if (payload === null) {
       // 创建镜像

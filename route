@@ -1,0 +1,36 @@
+import { NextResponse } from "next/server";
+import * as api from "@/apis/prizes";
+
+export async function GET() {
+  return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
+}
+
+export async function POST(request) {
+  // console.log("request: ", request);
+
+  const body = await request.json();
+  const action = body.action;
+  // console.log("action, body: ", action, body);
+
+  const result = { content: null };
+
+  result.content = await handler(action, body);
+  console.log("result: ", result);
+
+  return NextResponse.json(result);
+}
+
+const handler = async (action, body = null) => {
+  console.log(action, body);
+
+  const handlers = {
+    find: async (body) => await api.find({ ...body.input }),
+    findOne: async (body) => await api.findById(body.id),
+    createOne: async (body) => await api.insertOne(body.input),
+    deleteOne: async (body) => await api.deleteOne(body.id),
+    updateOne: async (body) => await api.updateOne(body.id, body.input),
+  };
+
+  const op = handlers[action];
+  return await op(body);
+};
