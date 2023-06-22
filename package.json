@@ -30,7 +30,7 @@
     "electron": "latest",
     "electron-builder": "latest",
     "electron-icon-builder": "^2.0.1",
-    "sass": "^1.63.4"
+    "sass": "^1.63.6"
   },
   "dependencies": {
     "@electron/remote": "^2.0.10",
